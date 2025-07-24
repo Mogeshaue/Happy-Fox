@@ -8,7 +8,7 @@ import {
   GraduationCap,
 } from "lucide-react";
 
-const Msidebar = () => {
+const MentorSidebar = () => {
   return (
     <div className="h-screen w-64 bg-white border-r shadow-sm fixed top-0 left-0 p-6">
       <h2 className="text-2xl font-bold text-gray-800 mb-10">Admin Panel</h2>
@@ -39,7 +39,7 @@ const Msidebar = () => {
           }
         >
           <BookOpen size={20} />
-          <span>Add Courses</span>
+          <span>Assigned-Courses</span>
         </NavLink>
 
         <NavLink
@@ -88,4 +88,4 @@ const Msidebar = () => {
   );
 };
 
-export default Msidebar;
+export default MentorSidebar;
