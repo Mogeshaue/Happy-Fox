@@ -2,8 +2,8 @@ import React from "react";
 
 const AddCourses = () => {
   return (
-    <div className="h-screen w-full bg-white flex  justify-center px-4">
-      <div className="bg-gray-100 p-10 rounded-lg shadow-md w-full h-[40px] max-w-md">
+    <div className="h-screen w-full bg-white flex justify-center px-4">
+      <div className="bg-gray-100 p-10 rounded-lg shadow-md w-full h-[250px] max-w-md">
         <h1 className="text-2xl font-bold mb-6 text-center">Create New Course</h1>
         <form className="space-y-4">
           <input
@@ -20,7 +20,7 @@ const AddCourses = () => {
             </button>
             <button
               type="button"
-              className="text-gray-600 hover:underline"
+             className="bg-red-600 text-white px-6 py-2 rounded-md hover:bg-blue-700 transition"
               onClick={() => window.history.back()}
             >
               Cancel
