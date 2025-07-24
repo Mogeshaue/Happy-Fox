@@ -83,6 +83,45 @@ const AdminSidebar = () => {
           <GraduationCap size={20} />
           <span>Add Mentors</span>
         </NavLink>
+        <NavLink
+          to="cohorts"
+          className={({ isActive }) =>
+            `flex items-center gap-3 px-4 py-2 rounded-md transition-all ${
+              isActive
+                ? "bg-blue-600 text-white font-semibold"
+                : "text-gray-700 hover:text-black hover:bg-gray-100"
+            }`
+          }
+        >
+          <ListTodo size={20} />
+          <span>Manage Cohorts</span>
+        </NavLink>
+        <NavLink
+          to="teams"
+          className={({ isActive }) =>
+            `flex items-center gap-3 px-4 py-2 rounded-md transition-all ${
+              isActive
+                ? "bg-blue-600 text-white font-semibold"
+                : "text-gray-700 hover:text-black hover:bg-gray-100"
+            }`
+          }
+        >
+          <Users size={20} />
+          <span>Manage Teams</span>
+        </NavLink>
+        <NavLink
+          to="invitations"
+          className={({ isActive }) =>
+            `flex items-center gap-3 px-4 py-2 rounded-md transition-all ${
+              isActive
+                ? "bg-blue-600 text-white font-semibold"
+                : "text-gray-700 hover:text-black hover:bg-gray-100"
+            }`
+          }
+        >
+          <GraduationCap size={20} />
+          <span>Manage Invitations</span>
+        </NavLink>
       </nav>
     </div>
   );

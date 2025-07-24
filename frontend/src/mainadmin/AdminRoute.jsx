@@ -8,6 +8,9 @@ import { Toaster } from 'react-hot-toast';
 import AdminStudents from './AdminStudents';
 import AdminMentor from './AdminMentor';
 import AdminDashboard from './AdminDashboard';
+import CohortManager from './CohortManager';
+import TeamManager from './TeamManager';
+import InvitationManager from './InvitationManager';
 const AdminRoute = () => {
   return (
   <div>
@@ -21,7 +24,9 @@ const AdminRoute = () => {
       <Route path="create-course" element={<Createcoursed />} />
       <Route path="Add-students" element={<AdminStudents />} />
       <Route path="Add-mentors" element={<AdminMentor />} />
-     
+      <Route path="cohorts" element={<CohortManager />} />
+      <Route path="teams" element={<TeamManager />} />
+      <Route path="invitations" element={<InvitationManager />} />
     </Route>
 
     {/* You can add public routes here */}

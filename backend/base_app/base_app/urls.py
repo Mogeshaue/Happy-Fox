@@ -18,6 +18,8 @@ from django.contrib import admin
 from django.urls import path
 from . import views
 from students import views as student_views
+from rest_framework.routers import DefaultRouter
+from students.views import CourseViewSet, CohortViewSet, TeamViewSet, InvitationViewSet
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -30,3 +32,11 @@ urlpatterns = [
     path('api/auth/google/', student_views.google_oauth_login, name='google_oauth_login'),
     path('api/auth/test/', student_views.test_student_login, name='test_student_login'),
 ]
+
+router = DefaultRouter()
+router.register(r'api/admin/courses', CourseViewSet, basename='admin-courses')
+router.register(r'api/admin/cohorts', CohortViewSet, basename='admin-cohorts')
+router.register(r'api/admin/teams', TeamViewSet, basename='admin-teams')
+router.register(r'api/admin/invitations', InvitationViewSet, basename='admin-invitations')
+
+urlpatterns += router.urls
