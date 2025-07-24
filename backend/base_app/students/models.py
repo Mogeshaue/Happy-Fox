@@ -12,3 +12,9 @@ class Student(models.Model):
 
     def __str__(self):
         return self.email
+    
+    @property
+    def full_name(self):
+        """Return full name combining first, middle, and last names"""
+        names = [self.first_name, self.middle_name, self.last_name]
+        return ' '.join(filter(None, names)) or self.email

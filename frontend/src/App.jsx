@@ -4,6 +4,7 @@ import viteLogo from '/vite.svg'
 import './App.css'
 import React from 'react'
 import AdminRoute from './mainadmin/AdminRoute'
+import MentorRoutes from './mentor/MentorRoutes.jsx'
 import GoogleOAuthLogin from './GoogleOAuthLogin'
 import SimpleStudentLogin from './SimpleStudentLogin'
 
@@ -94,9 +95,9 @@ function App() {
 
   return (
     <div>
-
-
+      {/* Include both Admin and Mentor Routes */}
       <AdminRoute/>
+      <MentorRoutes/>
     </div>
   )
 }
