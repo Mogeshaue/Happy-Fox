@@ -1,1 +1,8 @@
 venv/
+
+./venv_linux/
+db.sqlite3
+./venv/
+.venv/
+python.exe
+cmake-build-*/
