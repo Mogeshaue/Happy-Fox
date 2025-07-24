@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import useCourseStore from "../store/Adminstors";
+import ModuleList from "./Modulelist";
 
 const Createcoursed = () => {
   const { courses, addModule } = useCourseStore();
@@ -7,11 +8,11 @@ const Createcoursed = () => {
   const [expandedCourses, setExpandedCourses] = useState({});
 
   const handleAddModule = (courseId) => {
-    const moduleName = newModules[courseId];
-    if (!moduleName?.trim()) return;
+    const moduleData = newModules[courseId];
+    if (!moduleData?.name?.trim()) return;
 
-    addModule(courseId, moduleName);
-    setNewModules({ ...newModules, [courseId]: "" });
+    addModule(courseId, moduleData.name, moduleData.content || "");
+    setNewModules({ ...newModules, [courseId]: { name: "", content: "" } });
   };
 
   const toggleCourse = (courseId) => {
@@ -45,49 +46,53 @@ const Createcoursed = () => {
                 </button>
               </div>
 
-              {/* Modules */}
+              {/* Expanded Details */}
               {expandedCourses[course.id] && (
                 <>
+                  {/* Module List */}
                   {course.modules?.length > 0 && (
-                    <ul className="space-y-2">
-                      {course.modules.map((mod) => (
-                        <li
-                          key={mod.id}
-                          className="flex items-center justify-between bg-white p-2 rounded border border-gray-200"
-                        >
-                          <span>{mod.name}</span>
-                          <div className="flex gap-2">
-                            <button className="border border-blue-600 text-blue-600 px-3 py-0.5 rounded hover:bg-blue-600 hover:text-white transition text-sm">
-                               Edit
-                            </button>
-                            <button className="border border-green-600 text-green-600 px-3 py-0.5 rounded hover:bg-green-600 hover:text-white transition text-sm">
-                               Preview
-                            </button>
-                          </div>
-                        </li>
-                      ))}
-                    </ul>
+                    <ModuleList modules={course.modules} />
                   )}
 
-                  {/* Add Module Input */}
-                  <div className="mt-4 flex gap-2">
+                  {/* Add Module Form */}
+                  <div className="mt-4 space-y-2">
                     <input
                       type="text"
-                      placeholder="Add module"
-                      value={newModules[course.id] || ""}
+                      placeholder="Module name"
+                      value={newModules[course.id]?.name || ""}
                       onChange={(e) =>
                         setNewModules({
                           ...newModules,
-                          [course.id]: e.target.value,
+                          [course.id]: {
+                            ...(newModules[course.id] || {}),
+                            name: e.target.value,
+                          },
                         })
                       }
                       className="border border-gray-300 bg-gray-100 px-3 py-1 rounded w-full"
                     />
+
+                    <textarea
+                      placeholder="Module content"
+                      rows={3}
+                      value={newModules[course.id]?.content || ""}
+                      onChange={(e) =>
+                        setNewModules({
+                          ...newModules,
+                          [course.id]: {
+                            ...(newModules[course.id] || {}),
+                            content: e.target.value,
+                          },
+                        })
+                      }
+                      className="border border-gray-300 bg-gray-100 px-3 py-1 rounded w-full"
+                    />
+
                     <button
                       onClick={() => handleAddModule(course.id)}
                       className="bg-green-600 text-white px-4 py-1 rounded hover:bg-green-700 transition"
                     >
-                      Add
+                      Add Module
                     </button>
                   </div>
                 </>
