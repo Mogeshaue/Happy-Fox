@@ -1,0 +1,70 @@
+# Core Django dependencies
+Django>=4.2.0
+djangorestframework>=3.14.0
+
+# Database support
+psycopg2-binary>=2.9.0  # PostgreSQL adapter (optional)
+
+# API and serialization
+django-filter>=23.0
+django-cors-headers>=4.0.0
+
+# Authentication and permissions
+djangorestframework-simplejwt>=5.2.0  # JWT authentication (optional)
+
+# Documentation and API schema
+drf-spectacular>=0.26.0  # Auto-generated API documentation (optional)
+
+# File handling and uploads
+Pillow>=10.0.0  # Image processing for profile pictures (optional)
+
+# Utilities
+python-dateutil>=2.8.0
+pytz>=2023.3
+
+# Development and testing dependencies (optional in production)
+pytest-django>=4.5.0
+factory-boy>=3.2.0
+coverage>=7.0.0
+django-debug-toolbar>=4.0.0
+
+# Background task processing (optional - for notifications and analytics)
+celery>=5.3.0  # For background tasks like analytics updates
+redis>=4.5.0   # For caching and message broker
+
+# Email and notifications (optional)
+django-templated-mail>=1.1.0
+
+# Analytics and data visualization (optional)
+pandas>=2.0.0           # Data analysis for advanced analytics
+matplotlib>=3.7.0       # For generating charts
+seaborn>=0.12.0         # Statistical data visualization
+
+# File export capabilities (optional)
+openpyxl>=3.1.0         # Excel export for student data
+reportlab>=4.0.0        # PDF generation for certificates
+
+# Security enhancements (optional)
+django-ratelimit>=4.0.0 # Rate limiting for API endpoints
+django-axes>=6.0.0      # Login attempt monitoring
+
+# Mobile and push notifications (optional)
+pyfcm>=1.5.4            # Firebase Cloud Messaging for mobile notifications
+
+# Calendar integration (optional)
+icalendar>=5.0.0        # iCal format support for study schedules
+
+# Monitoring and logging (optional)
+sentry-sdk>=1.32.0      # Error tracking
+django-extensions>=3.2.0 # Additional Django utilities
+
+# Advanced permissions (optional)
+django-guardian>=2.4.0   # Object-level permissions
+
+# Search functionality (optional)
+django-haystack>=3.2.1   # Search framework
+elasticsearch>=8.9.0     # Elasticsearch backend (optional)
+
+# Real-time features (optional)
+channels>=4.0.0          # WebSocket support for real-time updates
+channels-redis>=4.1.0    # Redis channel layer 

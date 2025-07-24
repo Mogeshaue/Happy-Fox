@@ -32,6 +32,8 @@ urlpatterns = [
     path('api/student/', student_views.get_student, name='get_student'),
     path('api/students/', student_views.list_students, name='list_students'),
     path('api/auth/google/', student_views.google_auth, name='google_auth'),
+    path('api/auth/google/enhanced/', student_views.enhanced_google_auth, name='enhanced_google_auth'),
+    path('api/auth/dev-bypass/', student_views.dev_auth_bypass, name='dev_auth_bypass'),
     path('api/auth/test/', student_views.test_student_login, name='test_student_login'),
     
     # Mentor URLs

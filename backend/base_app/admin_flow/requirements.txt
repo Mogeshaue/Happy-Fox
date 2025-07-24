@@ -1,0 +1,48 @@
+# Core Django dependencies
+Django>=4.2.0
+djangorestframework>=3.14.0
+
+# Database support
+psycopg2-binary>=2.9.0  # PostgreSQL adapter (optional)
+
+# API and serialization
+django-filter>=23.0
+django-cors-headers>=4.0.0
+
+# Authentication and permissions
+djangorestframework-simplejwt>=5.2.0  # JWT authentication (optional)
+
+# Documentation and API schema
+drf-spectacular>=0.26.0  # Auto-generated API documentation (optional)
+
+# File handling and uploads
+Pillow>=10.0.0  # Image processing (optional)
+
+# Utilities
+python-dateutil>=2.8.0
+pytz>=2023.3
+
+# Development and testing dependencies (optional)
+pytest-django>=4.5.0
+factory-boy>=3.2.0
+coverage>=7.0.0
+django-debug-toolbar>=4.0.0
+
+# Background task processing (optional - for async operations)
+celery>=5.3.0  # For background content generation jobs
+redis>=4.5.0   # For caching and message broker
+
+# Email and notifications (optional)
+django-templated-mail>=1.1.0
+
+# Data export (optional)
+openpyxl>=3.1.0  # Excel export support
+reportlab>=4.0.0  # PDF generation support
+
+# Security enhancements (optional)
+django-ratelimit>=4.0.0  # Rate limiting
+django-axes>=6.0.0       # Login attempt monitoring
+
+# Monitoring and logging (optional)
+sentry-sdk>=1.32.0       # Error tracking
+django-extensions>=3.2.0 # Additional Django utilities 

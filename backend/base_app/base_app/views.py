@@ -19,7 +19,7 @@ def google_auth(request):
         return Response({'error': 'No token provided'}, status=status.HTTP_400_BAD_REQUEST)
     try:
         # Specify the CLIENT_ID of the app that accesses the backend
-        CLIENT_ID = 'YOUR_GOOGLE_CLIENT_ID.apps.googleusercontent.com'
+        CLIENT_ID = '305743130332-tsr28ldgeeadlrgr7udg816o0ll8iean.apps.googleusercontent.com'
         idinfo = id_token.verify_oauth2_token(token, google_requests.Request(), CLIENT_ID)
         # idinfo contains user info (sub, email, name, etc.)
         # Here you can create or get your user, and return a session/token as needed

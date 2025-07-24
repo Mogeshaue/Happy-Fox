@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'corsheaders',
     'students',
     'mentor',  # Added mentor app
+    'admin_flow',
 ]
 
 MIDDLEWARE = [

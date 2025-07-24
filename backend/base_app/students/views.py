@@ -70,15 +70,15 @@ def get_student(request):
     except Student.DoesNotExist:
         return Response({'error': 'Student not found'}, status=status.HTTP_404_NOT_FOUND)
 
-# ... existing code ...
 @api_view(['POST'])
 def google_auth(request):
-    """Authenticate with Google, create/get Student, and return student info."""
+    """Original Google authentication - for backward compatibility"""
     token = request.data.get('token')
     if not token:
         return Response({'error': 'No token provided'}, status=status.HTTP_400_BAD_REQUEST)
     try:
-        CLIENT_ID = '969085485835-loqiaoo05j21ibqd6evgobca07cj0ror.apps.googleusercontent.com'
+        # Google Client ID - Update this if you create a new OAuth Client ID
+        CLIENT_ID = "305743130332-tsr28ldgeeadlrgr7udg816o0ll8iean.apps.googleusercontent.com"
         idinfo = id_token.verify_oauth2_token(token, google_requests.Request(), CLIENT_ID)
         email = idinfo.get('email')
         first_name = idinfo.get('given_name', '')
@@ -109,7 +109,241 @@ def google_auth(request):
     except Exception as e:
         logger.error(f"Google auth error: {str(e)}")
         return Response({'error': f'Google auth failed: {str(e)}'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-# ... existing code ...
+
+@api_view(['POST'])
+def enhanced_google_auth(request):
+    """Enhanced Google authentication with role detection"""
+    token = request.data.get('token')
+    if not token:
+        return Response({'error': 'No token provided'}, status=status.HTTP_400_BAD_REQUEST)
+    
+    try:
+        # Google Client ID - Update this if you create a new OAuth Client ID
+        CLIENT_ID = "305743130332-tsr28ldgeeadlrgr7udg816o0ll8iean.apps.googleusercontent.com"
+        idinfo = id_token.verify_oauth2_token(token, google_requests.Request(), CLIENT_ID)
+        email = idinfo.get('email')
+        first_name = idinfo.get('given_name', '')
+        last_name = idinfo.get('family_name', '')
+        
+        if not email:
+            return Response({'error': 'Google account did not return an email'}, status=status.HTTP_400_BAD_REQUEST)
+        
+        # Create or get the student/user
+        user, created = Student.objects.get_or_create(
+            email=email,
+            defaults={
+                'first_name': first_name,
+                'last_name': last_name,
+                'default_dp_color': '#4285f4',  # Google blue
+            }
+        )
+        
+        # If user exists but name info is missing, update it
+        if not created and (not user.first_name or not user.last_name):
+            user.first_name = first_name or user.first_name
+            user.last_name = last_name or user.last_name
+            user.save()
+        
+        # Determine user roles
+        roles = []
+        role_details = {}
+        
+        # Check if user is admin
+        from mentor.models import UserOrganization
+        admin_orgs = UserOrganization.objects.filter(user=user, role='admin')
+        if admin_orgs.exists():
+            roles.append('admin')
+            role_details['admin'] = {
+                'organizations': [{'id': org.org.id, 'name': org.org.name, 'slug': org.org.slug} 
+                                for org in admin_orgs]
+            }
+        
+        # Check if user is mentor
+        from mentor.models import MentorProfile, UserCohort
+        try:
+            mentor_profile = MentorProfile.objects.get(user=user)
+            if mentor_profile.status == MentorProfile.Status.ACTIVE:
+                roles.append('mentor')
+                role_details['mentor'] = {
+                    'profile_id': mentor_profile.id,
+                    'experience_level': mentor_profile.experience_level,
+                    'status': mentor_profile.status,
+                    'max_students': mentor_profile.max_students,
+                    'current_students': mentor_profile.current_student_count,
+                    'rating': float(mentor_profile.rating)
+                }
+        except MentorProfile.DoesNotExist:
+            pass
+        
+        # Also check mentor role in cohorts
+        mentor_cohorts = UserCohort.objects.filter(user=user, role='mentor')
+        if mentor_cohorts.exists() and 'mentor' not in roles:
+            roles.append('mentor')
+            if 'mentor' not in role_details:
+                role_details['mentor'] = {}
+            role_details['mentor']['cohorts'] = [
+                {'id': uc.cohort.id, 'name': uc.cohort.name, 'org': uc.cohort.org.name}
+                for uc in mentor_cohorts
+            ]
+        
+        # Check if user is student/learner
+        student_cohorts = UserCohort.objects.filter(user=user, role='learner')
+        if student_cohorts.exists() or not roles:  # Default to student if no other roles
+            roles.append('student')
+            role_details['student'] = {
+                'cohorts': [
+                    {'id': uc.cohort.id, 'name': uc.cohort.name, 'org': uc.cohort.org.name}
+                    for uc in student_cohorts
+                ] if student_cohorts.exists() else []
+            }
+        
+        # Determine primary role (first role in hierarchy: admin > mentor > student)
+        primary_role = roles[0] if roles else 'student'
+        
+        # Serialize user data
+        user_data = StudentSerializer(user).data
+        
+        return Response({
+            'success': True,
+            'user': user_data,
+            'roles': roles,
+            'primary_role': primary_role,
+            'role_details': role_details,
+            'created': created,
+            'message': 'Google authentication successful'
+        }, status=status.HTTP_200_OK)
+        
+    except ValueError as e:
+        return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
+    except Exception as e:
+        logger.error(f"Enhanced Google auth error: {str(e)}")
+        return Response({'error': f'Google auth failed: {str(e)}'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+@api_view(['POST'])
+def dev_auth_bypass(request):
+    """Development authentication bypass for testing roles - REMOVE IN PRODUCTION"""
+    email = request.data.get('email')
+    role = request.data.get('role', 'student')
+    first_name = request.data.get('first_name', 'Test')
+    last_name = request.data.get('last_name', 'User')
+    
+    if not email:
+        return Response({'error': 'Email is required'}, status=status.HTTP_400_BAD_REQUEST)
+    
+    try:
+        # Create or get the user
+        user, created = Student.objects.get_or_create(
+            email=email,
+            defaults={
+                'first_name': first_name,
+                'last_name': last_name,
+                'default_dp_color': '#28a745',  # Green for dev users
+            }
+        )
+        
+        # Set up roles based on request
+        roles = []
+        role_details = {}
+        
+        if role == 'admin' or 'admin' in role:
+            # Create admin role
+            from mentor.models import Organization, UserOrganization
+            org, _ = Organization.objects.get_or_create(
+                slug='test-org',
+                defaults={'name': 'Test Organization'}
+            )
+            UserOrganization.objects.get_or_create(
+                user=user, org=org, defaults={'role': 'admin'}
+            )
+            roles.append('admin')
+            role_details['admin'] = {
+                'organizations': [{'id': org.id, 'name': org.name, 'slug': org.slug}]
+            }
+        
+        if role == 'mentor' or 'mentor' in role:
+            # Create mentor profile and role
+            from mentor.models import MentorProfile, Cohort, UserCohort, Organization
+            
+            org, _ = Organization.objects.get_or_create(
+                slug='test-org',
+                defaults={'name': 'Test Organization'}
+            )
+            
+            cohort, _ = Cohort.objects.get_or_create(
+                name='Test Cohort',
+                defaults={'org': org}
+            )
+            
+            # Create mentor profile
+            mentor_profile, _ = MentorProfile.objects.get_or_create(
+                user=user,
+                defaults={
+                    'experience_level': 'senior',
+                    'max_students': 10,
+                    'status': 'active',
+                    'bio': 'Test mentor created for development'
+                }
+            )
+            
+            # Add mentor to cohort
+            UserCohort.objects.get_or_create(
+                user=user, cohort=cohort, defaults={'role': 'mentor'}
+            )
+            
+            roles.append('mentor')
+            role_details['mentor'] = {
+                'profile_id': mentor_profile.id,
+                'experience_level': mentor_profile.experience_level,
+                'status': mentor_profile.status,
+                'max_students': mentor_profile.max_students,
+                'current_students': 0,
+                'rating': float(mentor_profile.rating)
+            }
+        
+        if role == 'student' or 'student' in role or not roles:
+            # Create student role
+            from mentor.models import Cohort, UserCohort, Organization
+            
+            org, _ = Organization.objects.get_or_create(
+                slug='test-org',
+                defaults={'name': 'Test Organization'}
+            )
+            
+            cohort, _ = Cohort.objects.get_or_create(
+                name='Test Student Cohort',
+                defaults={'org': org}
+            )
+            
+            UserCohort.objects.get_or_create(
+                user=user, cohort=cohort, defaults={'role': 'learner'}
+            )
+            
+            roles.append('student')
+            role_details['student'] = {
+                'cohorts': [{'id': cohort.id, 'name': cohort.name, 'org': org.name}]
+            }
+        
+        # Determine primary role
+        primary_role = roles[0] if roles else 'student'
+        
+        # Serialize user data
+        user_data = StudentSerializer(user).data
+        
+        return Response({
+            'success': True,
+            'user': user_data,
+            'roles': roles,
+            'primary_role': primary_role,
+            'role_details': role_details,
+            'created': created,
+            'dev_mode': True,
+            'message': f'Development authentication successful as {primary_role}'
+        }, status=status.HTTP_200_OK)
+        
+    except Exception as e:
+        logger.error(f"Dev auth error: {str(e)}")
+        return Response({'error': f'Dev auth failed: {str(e)}'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
 def test_student_login(request):
     """Test endpoint to simulate Google OAuth without popup - for development/testing only."""
     try:

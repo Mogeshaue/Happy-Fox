@@ -31,7 +31,7 @@ from .permissions import IsMentor, IsMentorOrStudent, IsOrgAdmin
 # ===============================
 
 @api_view(['GET'])
-@permission_classes([permissions.AllowAny])  # Temporarily disabled for testing
+@permission_classes([IsMentor])
 def mentor_profile_list(request):
     """List all mentor profiles"""
     try:
@@ -70,7 +70,7 @@ def mentor_profile_list(request):
 
 
 @api_view(['GET', 'PUT', 'PATCH'])
-@permission_classes([permissions.AllowAny])  # Temporarily disabled for testing
+@permission_classes([IsMentor])
 def mentor_profile_detail(request, pk=None):
     """Get or update mentor profile"""
     try:
@@ -78,17 +78,7 @@ def mentor_profile_detail(request, pk=None):
             mentor_profile = get_object_or_404(MentorProfile, pk=pk)
         else:
             # Handle /me endpoint
-            if not request.user.is_authenticated:
-                # For testing without authentication, return first mentor profile
-                mentor_profile = MentorProfile.objects.first()
-                if not mentor_profile:
-                    return Response({
-                        'success': False,
-                        'error': 'No mentor profiles found. Please create one in admin.',
-                        'message': 'Mentor profile not found'
-                    }, status=status.HTTP_404_NOT_FOUND)
-            else:
-                mentor_profile = get_object_or_404(MentorProfile, user=request.user)
+            mentor_profile = get_object_or_404(MentorProfile, user=request.user)
         
         if request.method == 'GET':
             serializer = MentorProfileSerializer(mentor_profile)
@@ -127,12 +117,11 @@ def mentor_profile_detail(request, pk=None):
 
 
 @api_view(['POST'])
-@permission_classes([permissions.AllowAny])  # Temporarily disabled for testing
+@permission_classes([IsMentor])
 def create_mentor_profile(request):
     """Create a mentor profile"""
     try:
-        # Use authenticated user or first user for testing
-        user = request.user if request.user.is_authenticated else User.objects.first()
+        user = request.user
         
         if not user:
             return Response({
@@ -170,25 +159,11 @@ def create_mentor_profile(request):
 # ===============================
 
 @api_view(['GET'])
-@permission_classes([permissions.AllowAny])  # Temporarily disabled for testing
+@permission_classes([IsMentor])
 def mentor_dashboard(request):
     """Comprehensive mentor dashboard"""
     try:
         user = request.user
-        
-        # For testing without authentication, use first mentor profile
-        if not user.is_authenticated:
-            mentor_profile = MentorProfile.objects.first()
-            if not mentor_profile:
-                return Response({
-                    'success': False,
-                    'error': 'No mentor profiles found. Please create one in admin.',
-                    'message': 'Mentor profile required'
-                }, status=status.HTTP_404_NOT_FOUND)
-            user = mentor_profile.user
-            print(f"Dashboard request for testing - using mentor: {user.email}")
-        else:
-            print(f"Dashboard request for authenticated user: {user.username}")
         
         # Get mentor profile
         mentor_profile = get_object_or_404(MentorProfile, user=user)
@@ -256,7 +231,7 @@ def mentor_dashboard(request):
 # ===============================
 
 @api_view(['GET', 'POST'])
-@permission_classes([permissions.AllowAny])  # Temporarily disabled for testing
+@permission_classes([IsMentorOrStudent])
 def mentorship_assignment_list(request):
     """List and create mentorship assignments"""
     try:
@@ -267,14 +242,10 @@ def mentorship_assignment_list(request):
             cohort_id = request.GET.get('cohort_id')
             
             # Base queryset
-            if request.user.is_authenticated:
-                if role == 'mentor':
-                    queryset = MentorshipAssignment.objects.filter(mentor=request.user)
-                else:
-                    queryset = MentorshipAssignment.objects.filter(student=request.user)
+            if role == 'mentor':
+                queryset = MentorshipAssignment.objects.filter(mentor=request.user)
             else:
-                # For testing, show all assignments
-                queryset = MentorshipAssignment.objects.all()
+                queryset = MentorshipAssignment.objects.filter(student=request.user)
             
             # Apply filters
             if status_filter:
@@ -317,7 +288,7 @@ def mentorship_assignment_list(request):
 
 
 @api_view(['GET', 'PUT', 'PATCH', 'DELETE'])
-@permission_classes([permissions.AllowAny])  # Temporarily disabled for testing
+@permission_classes([IsMentorOrStudent])
 def mentorship_assignment_detail(request, pk):
     """Get, update or delete assignment"""
     try:
@@ -367,7 +338,7 @@ def mentorship_assignment_detail(request, pk):
 
 
 @api_view(['POST'])
-@permission_classes([permissions.AllowAny])  # Temporarily disabled for testing
+@permission_classes([IsMentor])
 def activate_assignment(request, assignment_id):
     """Activate assignment"""
     try:
@@ -396,7 +367,7 @@ def activate_assignment(request, assignment_id):
 # ===============================
 
 @api_view(['GET', 'POST'])
-@permission_classes([permissions.AllowAny])  # Temporarily disabled for testing
+@permission_classes([IsMentorOrStudent])
 def mentor_message_list(request):
     """List and create mentor messages"""
     try:
@@ -410,11 +381,10 @@ def mentor_message_list(request):
                 ).select_related('sender').order_by('created_at')
             else:
                 # Return unread messages for unread count
-                queryset = MentorMessage.objects.filter(is_read=False)
-                if request.user.is_authenticated:
-                    queryset = queryset.filter(
-                        assignment__mentor=request.user
-                    )
+                queryset = MentorMessage.objects.filter(
+                    is_read=False,
+                    assignment__mentor=request.user
+                )
             
             if is_read is not None:
                 queryset = queryset.filter(is_read=(is_read.lower() == 'true'))
@@ -431,9 +401,7 @@ def mentor_message_list(request):
         elif request.method == 'POST':
             serializer = MentorMessageSerializer(data=request.data)
             if serializer.is_valid():
-                message = serializer.save(
-                    sender=request.user if request.user.is_authenticated else User.objects.first()
-                )
+                message = serializer.save(sender=request.user)
                 return Response({
                     'success': True,
                     'data': MentorMessageSerializer(message).data,
@@ -455,7 +423,7 @@ def mentor_message_list(request):
 
 
 @api_view(['PATCH'])
-@permission_classes([permissions.AllowAny])  # Temporarily disabled for testing
+@permission_classes([IsMentorOrStudent])
 def mark_message_as_read(request, message_id):
     """Mark a message as read"""
     try:
@@ -484,18 +452,14 @@ def mark_message_as_read(request, message_id):
 # ===============================
 
 @api_view(['GET', 'POST'])
-@permission_classes([permissions.AllowAny])  # Temporarily disabled for testing
+@permission_classes([IsMentorOrStudent])
 def mentor_session_list(request):
     """List and create mentor sessions"""
     try:
         if request.method == 'GET':
-            if request.user.is_authenticated:
-                queryset = MentorSession.objects.filter(
-                    assignment__mentor=request.user
-                ).select_related('assignment__student')
-            else:
-                # For testing, show all sessions
-                queryset = MentorSession.objects.all().select_related('assignment__student')
+            queryset = MentorSession.objects.filter(
+                assignment__mentor=request.user
+            ).select_related('assignment__student')
             
             # Apply filters
             status_filter = request.GET.get('status')
@@ -541,7 +505,7 @@ def mentor_session_list(request):
 
 
 @api_view(['GET', 'PUT', 'PATCH', 'DELETE'])
-@permission_classes([permissions.AllowAny])  # Temporarily disabled for testing
+@permission_classes([IsMentorOrStudent])
 def mentor_session_detail(request, pk):
     """Get, update or delete session"""
     try:
@@ -595,13 +559,11 @@ def mentor_session_detail(request, pk):
 # ===============================
 
 @api_view(['GET'])
-@permission_classes([permissions.AllowAny])  # Temporarily disabled for testing
+@permission_classes([IsMentor])
 def mentor_stats(request):
     """Get mentor statistics"""
     try:
-        user = request.user if request.user.is_authenticated else User.objects.filter(
-            mentorprofile__isnull=False
-        ).first()
+        user = request.user
         
         if not user:
             return Response({
@@ -641,13 +603,11 @@ def mentor_stats(request):
 
 
 @api_view(['GET'])
-@permission_classes([permissions.AllowAny])  # Temporarily disabled for testing
+@permission_classes([IsMentor])
 def mentor_students(request):
     """Get students assigned to mentor"""
     try:
-        user = request.user if request.user.is_authenticated else User.objects.filter(
-            mentorprofile__isnull=False
-        ).first()
+        user = request.user
         
         if not user:
             return Response({
@@ -682,7 +642,7 @@ def mentor_students(request):
 # ===============================
 
 @api_view(['GET'])
-@permission_classes([permissions.AllowAny])
+@permission_classes([IsMentorOrStudent])
 def student_progress_list(request):
     """Get student progress records"""
     return Response({
@@ -693,7 +653,7 @@ def student_progress_list(request):
 
 
 @api_view(['GET'])
-@permission_classes([permissions.AllowAny])
+@permission_classes([IsMentorOrStudent])
 def mentor_feedback_list(request):
     """Get mentor feedback"""
     return Response({
@@ -704,7 +664,7 @@ def mentor_feedback_list(request):
 
 
 @api_view(['PATCH'])
-@permission_classes([permissions.AllowAny])
+@permission_classes([IsMentorOrStudent])
 def acknowledge_feedback(request, feedback_id):
     """Acknowledge feedback"""
     return Response({
@@ -714,7 +674,7 @@ def acknowledge_feedback(request, feedback_id):
 
 
 @api_view(['GET'])
-@permission_classes([permissions.AllowAny])
+@permission_classes([IsMentorOrStudent])
 def mentorship_goal_list(request):
     """Get mentorship goals"""
     return Response({
@@ -725,7 +685,7 @@ def mentorship_goal_list(request):
 
 
 @api_view(['PATCH'])
-@permission_classes([permissions.AllowAny])
+@permission_classes([IsMentor])
 def complete_goal(request, goal_id):
     """Complete a goal"""
     return Response({
@@ -735,7 +695,7 @@ def complete_goal(request, goal_id):
 
 
 @api_view(['GET'])
-@permission_classes([permissions.AllowAny])
+@permission_classes([IsMentor])
 def mentor_notification_list(request):
     """Get mentor notifications"""
     return Response({
@@ -746,7 +706,7 @@ def mentor_notification_list(request):
 
 
 @api_view(['PATCH'])
-@permission_classes([permissions.AllowAny])
+@permission_classes([IsMentor])
 def mark_notification_as_read(request, notification_id):
     """Mark notification as read"""
     return Response({
@@ -756,7 +716,7 @@ def mark_notification_as_read(request, notification_id):
 
 
 @api_view(['POST'])
-@permission_classes([permissions.AllowAny])
+@permission_classes([IsOrgAdmin])
 def assign_mentor(request):
     """Assign mentor to student"""
     return Response({
@@ -766,7 +726,7 @@ def assign_mentor(request):
 
 
 @api_view(['GET'])
-@permission_classes([permissions.AllowAny])  # Temporarily disabled for testing
+@permission_classes([IsMentor])
 def mentor_analytics(request):
     """Get comprehensive mentor analytics with time filtering"""
     try:
@@ -792,9 +752,7 @@ def mentor_analytics(request):
             start_date = now - timedelta(days=90)  # Default to 3 months
         
         # Get mentor user (for testing, use first mentor if not authenticated)
-        user = request.user if request.user.is_authenticated else User.objects.filter(
-            mentor_profile__isnull=False
-        ).first()
+        user = request.user
         
         if not user:
             return Response({
@@ -956,7 +914,7 @@ def mentor_analytics(request):
 
 
 @api_view(['GET'])
-@permission_classes([permissions.AllowAny])
+@permission_classes([IsOrgAdmin])
 def available_mentors(request):
     """Get available mentors"""
     try:
@@ -982,7 +940,7 @@ def available_mentors(request):
 
 
 @api_view(['GET', 'PATCH'])
-@permission_classes([permissions.AllowAny])
+@permission_classes([IsMentor])
 def mentor_availability(request, mentor_id):
     """Get or update mentor availability"""
     try:
