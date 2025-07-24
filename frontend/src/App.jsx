@@ -9,6 +9,8 @@ import Mroute from './mentor/Mroute'
 
 import useCourseStore from './store/Adminstors'
 
+import useCourseStore from './store/Adminstors'
+
 
 const App = () => {
   const [activeView, setActiveView] = useState('home')
@@ -50,6 +52,8 @@ const App = () => {
     }
   }
 
+  const {authUser} =useCourseStore()
+  console.log(authUser)
   const {authUser} =useCourseStore()
   console.log(authUser)
   return (
