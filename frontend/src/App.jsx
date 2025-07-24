@@ -4,6 +4,7 @@ import SimpleStudentLoginBasic from './SimpleStudentLoginBasic'
 import AdminDashboardBasic from './AdminDashboardBasic'
 import './App.css'
 import StudentRoute from './Studentsdashboard/Studentsroute'
+import MentorRoutes from './mentor/MentorRoutes.jsx'
 import Welcome from './Welcome/Welcome'
 import Mroute from './mentor/Mroute'
 
@@ -81,6 +82,7 @@ const App = () => {
       <main className="main-content">
         {renderContent()}
       </main>
+      <MentorRoutes/>
     </div>
   )
 }
