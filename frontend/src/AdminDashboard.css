@@ -1,0 +1,301 @@
+.admin-dashboard {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+.admin-dashboard h1 {
+  color: #333;
+  text-align: center;
+  margin-bottom: 30px;
+  border-bottom: 3px solid #007bff;
+  padding-bottom: 10px;
+}
+
+/* Error Message */
+.error-message {
+  background-color: #f8d7da;
+  color: #721c24;
+  padding: 12px 20px;
+  border: 1px solid #f5c6cb;
+  border-radius: 6px;
+  margin-bottom: 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.error-message button {
+  background: none;
+  border: none;
+  color: #721c24;
+  font-size: 18px;
+  cursor: pointer;
+  padding: 0;
+  margin-left: 10px;
+}
+
+/* Loading */
+.loading {
+  text-align: center;
+  padding: 20px;
+  color: #007bff;
+  font-weight: bold;
+}
+
+/* Navigation */
+.admin-nav {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 30px;
+  border-bottom: 2px solid #e9ecef;
+}
+
+.admin-nav button {
+  background: none;
+  border: none;
+  padding: 12px 24px;
+  cursor: pointer;
+  border-radius: 6px 6px 0 0;
+  font-size: 16px;
+  color: #495057;
+  transition: all 0.3s ease;
+}
+
+.admin-nav button:hover {
+  background-color: #f8f9fa;
+  color: #007bff;
+}
+
+.admin-nav button.active {
+  background-color: #007bff;
+  color: white;
+  font-weight: bold;
+}
+
+/* Tab Content */
+.tab-content {
+  min-height: 500px;
+}
+
+.tab-content h2 {
+  color: #495057;
+  margin-bottom: 25px;
+  font-size: 24px;
+}
+
+.tab-content h3 {
+  color: #6c757d;
+  margin-bottom: 15px;
+  font-size: 18px;
+  border-left: 4px solid #007bff;
+  padding-left: 15px;
+}
+
+/* Form Section */
+.form-section {
+  background: #f8f9fa;
+  padding: 25px;
+  border-radius: 8px;
+  margin-bottom: 30px;
+  border: 1px solid #e9ecef;
+}
+
+.form-group {
+  display: flex;
+  gap: 15px;
+  flex-wrap: wrap;
+  align-items: flex-start;
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+  padding: 10px 15px;
+  border: 2px solid #ced4da;
+  border-radius: 6px;
+  font-size: 14px;
+  transition: border-color 0.3s ease;
+  min-width: 200px;
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+  outline: none;
+  border-color: #007bff;
+  box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+}
+
+.form-group textarea {
+  min-height: 80px;
+  resize: vertical;
+  min-width: 300px;
+}
+
+.form-group button {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  padding: 12px 20px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: bold;
+  transition: all 0.3s ease;
+  min-width: 120px;
+}
+
+.form-group button:hover:not(:disabled) {
+  background-color: #0056b3;
+  transform: translateY(-1px);
+}
+
+.form-group button:disabled {
+  background-color: #6c757d;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* List Section */
+.list-section {
+  background: white;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.list-section table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.list-section th {
+  background-color: #343a40;
+  color: white;
+  padding: 15px 10px;
+  text-align: left;
+  font-weight: bold;
+  font-size: 14px;
+}
+
+.list-section td {
+  padding: 12px 10px;
+  border-bottom: 1px solid #e9ecef;
+  vertical-align: top;
+}
+
+.list-section tr:hover {
+  background-color: #f8f9fa;
+}
+
+.list-section tr:nth-child(even) {
+  background-color: #f8f9fa;
+}
+
+.list-section tr:nth-child(even):hover {
+  background-color: #e9ecef;
+}
+
+/* Status Badge */
+.status {
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: bold;
+  text-transform: uppercase;
+}
+
+.status.pending {
+  background-color: #fff3cd;
+  color: #856404;
+  border: 1px solid #ffeaa7;
+}
+
+.status.accepted {
+  background-color: #d4edda;
+  color: #155724;
+  border: 1px solid #c3e6cb;
+}
+
+/* Delete Button */
+.delete-btn {
+  background-color: #dc3545;
+  color: white;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 12px;
+  transition: all 0.3s ease;
+}
+
+.delete-btn:hover:not(:disabled) {
+  background-color: #c82333;
+  transform: translateY(-1px);
+}
+
+.delete-btn:disabled {
+  background-color: #6c757d;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* Empty State */
+.list-section p {
+  text-align: center;
+  color: #6c757d;
+  padding: 40px;
+  font-style: italic;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .admin-dashboard {
+    padding: 10px;
+  }
+  
+  .admin-nav {
+    flex-direction: column;
+  }
+  
+  .form-group {
+    flex-direction: column;
+  }
+  
+  .form-group input,
+  .form-group select,
+  .form-group textarea {
+    min-width: 100%;
+  }
+  
+  .list-section {
+    overflow-x: auto;
+  }
+  
+  .list-section table {
+    min-width: 600px;
+  }
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.tab-content {
+  animation: fadeIn 0.3s ease;
+}
+
+/* Success feedback */
+.form-group button:not(:disabled):active {
+  transform: translateY(1px);
+}

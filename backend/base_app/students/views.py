@@ -8,9 +8,38 @@ from google.oauth2 import id_token
 from google.auth.transport import requests as google_requests
 import json
 import logging
+from rest_framework import viewsets, permissions
+from .models import Course, Cohort, Team, Invitation
+from .serializers import CourseSerializer, CohortSerializer, TeamSerializer, InvitationSerializer
 
 # Set up logging
 logger = logging.getLogger(__name__)
+
+class IsAdminUser(permissions.BasePermission):
+    def has_permission(self, request, view):
+        # Temporarily allow all requests for testing - REMOVE IN PRODUCTION
+        return True
+        # return request.user and request.user.is_staff
+
+class CourseViewSet(viewsets.ModelViewSet):
+    queryset = Course.objects.all().order_by('-created_at')
+    serializer_class = CourseSerializer
+    permission_classes = [IsAdminUser]
+
+class CohortViewSet(viewsets.ModelViewSet):
+    queryset = Cohort.objects.all().order_by('-start_date')
+    serializer_class = CohortSerializer
+    permission_classes = [IsAdminUser]
+
+class TeamViewSet(viewsets.ModelViewSet):
+    queryset = Team.objects.all().order_by('name')
+    serializer_class = TeamSerializer
+    permission_classes = [IsAdminUser]
+
+class InvitationViewSet(viewsets.ModelViewSet):
+    queryset = Invitation.objects.all().order_by('-created_at')
+    serializer_class = InvitationSerializer
+    permission_classes = [IsAdminUser]
 
 @api_view(['POST'])
 def register_student(request):

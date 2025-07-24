@@ -1,19 +1,22 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import useCourseStore from "../store/Adminstors";
 import ModuleList from "./Modulelist";
 
 const Createcoursed = () => {
-  const { courses, addModule } = useCourseStore();
-  const [newModules, setNewModules] = useState({});
+  const {
+    courses,
+    fetchCourses,
+    deleteCourse,
+    loadingCourses,
+    errorCourses,
+  } = useCourseStore();
   const [expandedCourses, setExpandedCourses] = useState({});
+  const [deletingId, setDeletingId] = useState(null);
 
-  const handleAddModule = (courseId) => {
-    const moduleData = newModules[courseId];
-    if (!moduleData?.name?.trim()) return;
-
-    addModule(courseId, moduleData.name, moduleData.content || "");
-    setNewModules({ ...newModules, [courseId]: { name: "", content: "" } });
-  };
+  useEffect(() => {
+    fetchCourses();
+    // eslint-disable-next-line
+  }, []);
 
   const toggleCourse = (courseId) => {
     setExpandedCourses((prev) => ({
@@ -22,11 +25,20 @@ const Createcoursed = () => {
     }));
   };
 
+  const handleDelete = async (id) => {
+    setDeletingId(id);
+    await deleteCourse(id);
+    setDeletingId(null);
+  };
+
   return (
     <div className="p-6 bg-white min-h-screen text-black">
       <h2 className="text-3xl font-bold mb-6">Created Courses</h2>
-
-      {courses.length === 0 ? (
+      {loadingCourses ? (
+        <p className="text-gray-500">Loading courses...</p>
+      ) : errorCourses ? (
+        <p className="text-red-500">Error: {errorCourses}</p>
+      ) : courses.length === 0 ? (
         <p className="text-gray-500">No courses created yet.</p>
       ) : (
         <ul className="space-y-6">
@@ -38,64 +50,29 @@ const Createcoursed = () => {
               {/* Course Header */}
               <div className="flex justify-between items-center mb-2">
                 <div className="text-xl font-semibold">{course.name}</div>
-                <button
-                  onClick={() => toggleCourse(course.id)}
-                  className="text-black text-2xl hover:text-gray-600"
-                >
-                  {expandedCourses[course.id] ? "⌄" : "›"}
-                </button>
+                <div className="flex gap-2">
+                  <button
+                    onClick={() => toggleCourse(course.id)}
+                    className="text-black text-2xl hover:text-gray-600"
+                  >
+                    {expandedCourses[course.id] ? "\u2304" : "\u203a"}
+                  </button>
+                  <button
+                    onClick={() => handleDelete(course.id)}
+                    className="border border-red-600 text-red-600 px-3 py-0.5 rounded hover:bg-red-600 hover:text-white transition text-sm"
+                    disabled={deletingId === course.id}
+                  >
+                    {deletingId === course.id ? "Deleting..." : "Delete"}
+                  </button>
+                </div>
               </div>
-
-              {/* Expanded Details */}
+              {/* Description */}
+              {course.description && (
+                <div className="mb-2 text-gray-700 text-sm">{course.description}</div>
+              )}
+              {/* Expanded Details (future) */}
               {expandedCourses[course.id] && (
-                <>
-                  {/* Module List */}
-                  {course.modules?.length > 0 && (
-                    <ModuleList modules={course.modules} />
-                  )}
-
-                  {/* Add Module Form */}
-                  <div className="mt-4 space-y-2">
-                    <input
-                      type="text"
-                      placeholder="Module name"
-                      value={newModules[course.id]?.name || ""}
-                      onChange={(e) =>
-                        setNewModules({
-                          ...newModules,
-                          [course.id]: {
-                            ...(newModules[course.id] || {}),
-                            name: e.target.value,
-                          },
-                        })
-                      }
-                      className="border border-gray-300 bg-gray-100 px-3 py-1 rounded w-full"
-                    />
-
-                    <textarea
-                      placeholder="Module content"
-                      rows={3}
-                      value={newModules[course.id]?.content || ""}
-                      onChange={(e) =>
-                        setNewModules({
-                          ...newModules,
-                          [course.id]: {
-                            ...(newModules[course.id] || {}),
-                            content: e.target.value,
-                          },
-                        })
-                      }
-                      className="border border-gray-300 bg-gray-100 px-3 py-1 rounded w-full"
-                    />
-
-                    <button
-                      onClick={() => handleAddModule(course.id)}
-                      className="bg-green-600 text-white px-4 py-1 rounded hover:bg-green-700 transition"
-                    >
-                      Add Module
-                    </button>
-                  </div>
-                </>
+                <div className="text-gray-400 text-xs">(Modules feature coming soon)</div>
               )}
             </li>
           ))}
