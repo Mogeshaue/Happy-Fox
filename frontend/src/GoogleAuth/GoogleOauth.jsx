@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import useCourseStore from '../store/Adminstors';
 
-const GOOGLE_CLIENT_ID = '969085485835-loqiaoo05j21ibqd6evgobca07cj0ror.apps.googleusercontent.com';
+const GOOGLE_CLIENT_ID = '305743130332-tsr28ldgeeadlrgr7udg816o0ll8iean.apps.googleusercontent.com';
 
 const GoogleOauth = ({ onLoginSuccess, onLoginError }) => {
   const { setAuthUser } = useCourseStore(); // ✅ Fix: Correct destructuring from Zustand store

@@ -16,7 +16,7 @@ const GoogleOAuthLoginBasic = () => {
     script.onload = () => {
       if (window.google) {
         window.google.accounts.id.initialize({
-          client_id: '334942844947-dsh25hdm1ekhqq76f1cj15vls8ufvs2s.apps.googleusercontent.com',
+          client_id: '305743130332-tsr28ldgeeadlrgr7udg816o0ll8iean.apps.googleusercontent.com',
           callback: handleCredentialResponse,
         });
       }

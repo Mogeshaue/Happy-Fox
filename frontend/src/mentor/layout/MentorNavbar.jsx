@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { Bell, Search, Settings, LogOut, User } from 'lucide-react';
 import useMentorStore from '../store/mentorStore.js';
+import { useAuth } from '../../contexts/AuthContext.jsx';
 import { COLORS } from '../utils/constants.js';
 
 const MentorNavbar = () => {
@@ -10,6 +11,9 @@ const MentorNavbar = () => {
   const [showProfileDropdown, setShowProfileDropdown] = useState(false);
   const [showNotifications, setShowNotifications] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
+  
+  // Use our centralized auth context
+  const { user, logout: authLogout, getUserDisplayName } = useAuth();
   
   const { 
     mentorProfile, 
@@ -38,10 +42,8 @@ const MentorNavbar = () => {
   }, [fetchUnreadMessageCount]);
 
   const handleLogout = () => {
-    // Clear local storage and redirect to login
-    localStorage.removeItem('auth_token');
-    localStorage.removeItem('user_data');
-    navigate('/login');
+    // Use our centralized auth logout
+    authLogout();
   };
 
   const handleSearch = (e) => {
@@ -141,13 +143,13 @@ const MentorNavbar = () => {
           >
             <div 
               className="w-8 h-8 rounded-full flex items-center justify-center text-white font-medium text-sm"
-              style={{ backgroundColor: mentorProfile?.user?.default_dp_color || COLORS.PRIMARY }}
+              style={{ backgroundColor: mentorProfile?.user?.default_dp_color || user?.default_dp_color || COLORS.PRIMARY }}
             >
-              {mentorProfile?.user?.first_name?.charAt(0) || 'M'}
+              {(mentorProfile?.user?.first_name || user?.first_name)?.charAt(0) || 'M'}
             </div>
             <div className="hidden md:block text-left">
               <p className="text-sm font-medium text-gray-900">
-                {mentorProfile?.user?.full_name || 'Mentor'}
+                {mentorProfile?.user?.full_name || getUserDisplayName() || 'Mentor'}
               </p>
               <p className="text-xs text-gray-500 capitalize">
                 {mentorProfile?.experience_level || 'Mentor'}
@@ -160,10 +162,10 @@ const MentorNavbar = () => {
             <div className="absolute right-0 mt-2 w-48 bg-white border border-gray-200 rounded-lg shadow-lg z-50">
               <div className="p-4 border-b border-gray-100">
                 <p className="font-medium text-gray-900">
-                  {mentorProfile?.user?.full_name || 'Mentor'}
+                  {mentorProfile?.user?.full_name || getUserDisplayName() || 'Mentor'}
                 </p>
                 <p className="text-sm text-gray-500">
-                  {mentorProfile?.user?.email}
+                  {mentorProfile?.user?.email || user?.email}
                 </p>
               </div>
               
