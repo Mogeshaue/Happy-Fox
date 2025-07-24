@@ -1,0 +1,170 @@
+#root {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 2rem;
+  text-align: center;
+}
+
+.app {
+  width: 100%;
+  min-height: 100vh;
+}
+
+/* Main Navigation */
+.main-nav {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 30px;
+  padding: 15px 0;
+  border-bottom: 2px solid #e9ecef;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.main-nav button {
+  background: #f8f9fa;
+  border: 2px solid #dee2e6;
+  padding: 12px 24px;
+  cursor: pointer;
+  border-radius: 25px;
+  font-size: 16px;
+  color: #495057;
+  transition: all 0.3s ease;
+  font-weight: 500;
+}
+
+.main-nav button:hover {
+  background-color: #e9ecef;
+  color: #007bff;
+  border-color: #007bff;
+  transform: translateY(-2px);
+}
+
+.main-nav button.active {
+  background-color: #007bff;
+  color: white;
+  border-color: #007bff;
+  font-weight: bold;
+  box-shadow: 0 4px 8px rgba(0, 123, 255, 0.3);
+}
+
+/* Main Content */
+.main-content {
+  min-height: 500px;
+  padding: 20px 0;
+}
+
+/* Home Section */
+.home-section {
+  max-width: 600px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.home-section h1 {
+  color: #333;
+  margin-bottom: 20px;
+  font-size: 2.5rem;
+}
+
+.home-section p {
+  color: #666;
+  font-size: 1.1rem;
+  line-height: 1.6;
+  margin-bottom: 15px;
+}
+
+.home-section ul {
+  text-align: left;
+  max-width: 400px;
+  margin: 20px auto;
+}
+
+.home-section li {
+  margin-bottom: 10px;
+  color: #555;
+  line-height: 1.5;
+}
+
+/* Login Section */
+.login-section {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.login-section h2 {
+  color: #333;
+  margin-bottom: 30px;
+  text-align: center;
+}
+
+.login-option {
+  background: #f8f9fa;
+  padding: 25px;
+  margin-bottom: 20px;
+  border-radius: 10px;
+  border: 1px solid #e9ecef;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.login-option h3 {
+  color: #495057;
+  margin-bottom: 15px;
+  text-align: center;
+}
+
+.logo {
+  height: 6em;
+  padding: 1.5em;
+  will-change: filter;
+  transition: filter 300ms;
+}
+.logo:hover {
+  filter: drop-shadow(0 0 2em #646cffaa);
+}
+.logo.react:hover {
+  filter: drop-shadow(0 0 2em #61dafbaa);
+}
+
+@keyframes logo-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  a:nth-of-type(2) .logo {
+    animation: logo-spin infinite 20s linear;
+  }
+}
+
+.card {
+  padding: 2em;
+}
+
+.read-the-docs {
+  color: #888;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .main-nav {
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .main-nav button {
+    width: 200px;
+  }
+  
+  .home-section h1 {
+    font-size: 2rem;
+  }
+  
+  .login-option {
+    padding: 20px 15px;
+  }
+}
