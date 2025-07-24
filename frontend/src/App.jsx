@@ -2,6 +2,8 @@ import { useState, useEffect } from 'react'
 import reactLogo from './assets/react.svg'
 import viteLogo from '/vite.svg'
 import './App.css'
+import GoogleOAuthLogin from './GoogleOAuthLogin'
+import SimpleStudentLogin from './SimpleStudentLogin'
 
 function App() {
   const [count, setCount] = useState(0)
@@ -10,6 +12,8 @@ function App() {
   const [echoResponse, setEchoResponse] = useState('')
   const [data, setData] = useState([])
   const [loading, setLoading] = useState(false)
+  const [user, setUser] = useState(null)
+  const [loginError, setLoginError] = useState('')
 
   const API_BASE_URL = 'http://127.0.0.1:8000/api'
 
@@ -66,6 +70,26 @@ function App() {
     }
   }
 
+  // Handle Google OAuth login success
+  const handleLoginSuccess = (loginData) => {
+    setUser(loginData.student)
+    setLoginError('')
+    console.log('Login successful:', loginData)
+  }
+
+  // Handle Google OAuth login error
+  const handleLoginError = (error) => {
+    setLoginError(error)
+    setUser(null)
+    console.error('Login error:', error)
+  }
+
+  // Handle logout
+  const handleLogout = () => {
+    setUser(null)
+    setLoginError('')
+  }
+
   return (
     <>
       <div>
@@ -76,7 +100,60 @@ function App() {
           <img src={reactLogo} className="logo react" alt="React logo" />
         </a>
       </div>
-      <h1>React + Django Connection</h1>
+      <h1>React + Django + Google OAuth</h1>
+      
+      {/* Student Login Section */}
+      <div className="card">
+        <h2>Student Login</h2>
+        {!user ? (
+          <div>
+            <div style={{ marginBottom: '20px' }}>
+              <h4>Method 1: Test Login (No Google Popup)</h4>
+              <SimpleStudentLogin 
+                onLoginSuccess={handleLoginSuccess}
+                onLoginError={handleLoginError}
+              />
+            </div>
+            
+            <div style={{ margin: '20px 0', borderTop: '1px solid #ccc', paddingTop: '20px' }}>
+              <h4>Method 2: Google OAuth (Requires Google Popup)</h4>
+              <GoogleOAuthLogin 
+                onLoginSuccess={handleLoginSuccess}
+                onLoginError={handleLoginError}
+              />
+            </div>
+            
+            {loginError && (
+              <p style={{ color: 'red', marginTop: '10px' }}>
+                Error: {loginError}
+              </p>
+            )}
+          </div>
+        ) : (
+          <div style={{ textAlign: 'center' }}>
+            <h3>Welcome, {user.first_name || user.email}!</h3>
+            <div style={{ margin: '10px 0', padding: '10px', backgroundColor: '#f0f8ff', borderRadius: '5px' }}>
+              <p><strong>Email:</strong> {user.email}</p>
+              <p><strong>Name:</strong> {user.first_name} {user.last_name}</p>
+              <p><strong>Student ID:</strong> {user.id}</p>
+              <p><strong>Joined:</strong> {new Date(user.created_at).toLocaleDateString()}</p>
+            </div>
+            <button 
+              onClick={handleLogout}
+              style={{ 
+                backgroundColor: '#dc3545', 
+                color: 'white', 
+                border: 'none', 
+                padding: '8px 16px', 
+                borderRadius: '4px',
+                cursor: 'pointer'
+              }}
+            >
+              Logout
+            </button>
+          </div>
+        )}
+      </div>
       
       <div className="card">
         <button onClick={() => setCount((count) => count + 1)}>
