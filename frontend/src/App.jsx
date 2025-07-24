@@ -3,18 +3,21 @@ import GoogleOAuthLoginBasic from './GoogleOAuthLoginBasic'
 import SimpleStudentLoginBasic from './SimpleStudentLoginBasic'
 import AdminDashboardBasic from './AdminDashboardBasic'
 import './App.css'
-import StudentRoute from './Studentsdashboard/Studentsroute'
+import React from 'react'
+import AdminRoute from './mainadmin/AdminRoute'
 import MentorRoutes from './mentor/MentorRoutes.jsx'
-import Welcome from './Welcome/Welcome'
-import Mroute from './mentor/Mroute'
+import GoogleOAuthLogin from './GoogleOAuthLogin'
+import SimpleStudentLogin from './SimpleStudentLogin'
 
-import useCourseStore from './store/Adminstors'
-
-// import useCourseStore from './store/Adminstors'
-
-
-const App = () => {
-  const [activeView, setActiveView] = useState('home')
+function App() {
+  const [count, setCount] = useState(0)
+  const [message, setMessage] = useState('')
+  const [echoInput, setEchoInput] = useState('')
+  const [echoResponse, setEchoResponse] = useState('')
+  const [data, setData] = useState([])
+  const [loading, setLoading] = useState(false)
+  const [user, setUser] = useState(null)
+  const [loginError, setLoginError] = useState('')
 
   const renderContent = () => {
     switch(activeView) {
@@ -57,31 +60,9 @@ const App = () => {
   console.log(authUser)
 
   return (
-    <div className="app">
-      <nav className="main-nav">
-        <button 
-          className={activeView === 'home' ? 'active' : ''} 
-          onClick={() => setActiveView('home')}
-        >
-          Home
-        </button>
-        <button 
-          className={activeView === 'login' ? 'active' : ''} 
-          onClick={() => setActiveView('login')}
-        >
-          Student Login
-        </button>
-        <button 
-          className={activeView === 'admin' ? 'active' : ''} 
-          onClick={() => setActiveView('admin')}
-        >
-          Admin Dashboard
-        </button>
-      </nav>
-      
-      <main className="main-content">
-        {renderContent()}
-      </main>
+    <div>
+      {/* Include both Admin and Mentor Routes */}
+      <AdminRoute/>
       <MentorRoutes/>
     </div>
   )

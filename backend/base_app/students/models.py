@@ -657,4 +657,9 @@ class StudyGroupMembership(models.Model):
             self.status = self.Status.ACTIVE
             self.approved_at = timezone.now()
             self.approved_by = approver
-            self.save()
+            self.save()    
+    @property
+    def full_name(self):
+        """Return full name combining first, middle, and last names"""
+        names = [self.first_name, self.middle_name, self.last_name]
+        return ' '.join(filter(None, names)) or self.email
