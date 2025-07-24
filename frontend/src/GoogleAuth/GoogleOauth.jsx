@@ -1,106 +1,56 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect } from 'react';
+import useCourseStore from '../store/Adminstors';
+
+const GOOGLE_CLIENT_ID = '969085485835-loqiaoo05j21ibqd6evgobca07cj0ror.apps.googleusercontent.com';
 
 const GoogleOauth = ({ onLoginSuccess, onLoginError }) => {
-  const [isLoading, setIsLoading] = useState(false);
-  const [isGoogleLoaded, setIsGoogleLoaded] = useState(false);
-
-  const GOOGLE_CLIENT_ID = '969085485835-loqiaoo05j21ibqd6evgobca07cj0ror.apps.googleusercontent.com';
+  const { setAuthUser } = useCourseStore(); // ✅ Fix: Correct destructuring from Zustand store
 
   useEffect(() => {
-    const loadGoogleScript = () => {
+    const initializeGoogleSignIn = () => {
+      window.google.accounts.id.initialize({
+        client_id: GOOGLE_CLIENT_ID,
+        callback: handleCredentialResponse,
+      });
+      window.google.accounts.id.renderButton(
+        document.getElementById('google-signin-button'),
+        { theme: 'outline', size: 'large' }
+      );
+    };
+
+    if (!window.google || !window.google.accounts || !window.google.accounts.id) {
       const script = document.createElement('script');
       script.src = 'https://accounts.google.com/gsi/client';
       script.async = true;
       script.defer = true;
-      script.onload = () => {
-        setIsGoogleLoaded(true);
-      };
-      script.onerror = () => {
-        onLoginError('Failed to load Google services');
-      };
-      document.head.appendChild(script);
-    };
-
-    if (!window.google) {
-      loadGoogleScript();
+      script.onload = initializeGoogleSignIn;
+      document.body.appendChild(script);
     } else {
-      setIsGoogleLoaded(true);
-    }
-  }, []);
-
-  const handleGoogleLogin = () => {
-    if (!window.google || !isGoogleLoaded) {
-      onLoginError('Google services not loaded');
-      return;
+      initializeGoogleSignIn();
     }
 
-    setIsLoading(true);
-
-    const tokenClient = window.google.accounts.oauth2.initTokenClient({
-      client_id: GOOGLE_CLIENT_ID,
-      scope: 'email profile openid',
-      response_type: 'id_token',
-      callback: async (response) => {
-        const idToken = response.id_token;
-
-        if (!idToken) {
-          onLoginError('No ID token received');
-          setIsLoading(false);
-          return;
-        }
-
-        try {
-          const res = await fetch('http://127.0.0.1:8000/api/auth/google/', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ token: idToken }),
-          });
-
-          const data = await res.json();
-
-          if (res.ok) {
-            alert('✅ Login successful!');
+    function handleCredentialResponse(response) {
+      fetch('http://127.0.0.1:8000/api/auth/google/', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ token: response.credential }),
+      })
+        .then(res => res.json())
+        .then(data => {
+          if (data.student) {
+            setAuthUser(data.student); // ✅ Save user data in Zustand store
             onLoginSuccess(data);
           } else {
             onLoginError(data.error || 'Login failed');
           }
-        } catch (err) {
-          onLoginError(err.message || 'Google login failed');
-        } finally {
-          setIsLoading(false);
-        }
-      },
-      error_callback: (err) => {
-        onLoginError('Google login failed');
-        setIsLoading(false);
-      }
-    });
+        })
+        .catch(err => {
+          onLoginError(err.message || 'Login failed');
+        });
+    }
+  }, [onLoginSuccess, onLoginError, setAuthUser]);
 
-    tokenClient.requestAccessToken();
-  };
-
-  return (
-    <div style={{ textAlign: 'center', margin: '20px' }}>
-      <button
-        onClick={handleGoogleLogin}
-        disabled={isLoading || !isGoogleLoaded}
-        style={{
-          backgroundColor: '#4285f4',
-          color: 'white',
-          padding: '12px 24px',
-          border: 'none',
-          borderRadius: '4px',
-          fontSize: '16px',
-          cursor: isGoogleLoaded ? 'pointer' : 'not-allowed',
-          opacity: isLoading ? 0.6 : 1
-        }}
-      >
-        {isLoading ? 'Signing in...' : 'Sign in with Google'}
-      </button>
-    </div>
-  );
+  return <div id="google-signin-button"></div>;
 };
 
 export default GoogleOauth;

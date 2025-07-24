@@ -13,6 +13,21 @@ def hello_world(request):
     })
 
 @api_view(['POST'])
+def google_auth(request):
+    token = request.data.get('token')
+    if not token:
+        return Response({'error': 'No token provided'}, status=status.HTTP_400_BAD_REQUEST)
+    try:
+        # Specify the CLIENT_ID of the app that accesses the backend
+        CLIENT_ID = 'YOUR_GOOGLE_CLIENT_ID.apps.googleusercontent.com'
+        idinfo = id_token.verify_oauth2_token(token, google_requests.Request(), CLIENT_ID)
+        # idinfo contains user info (sub, email, name, etc.)
+        # Here you can create or get your user, and return a session/token as needed
+        return Response({'message': 'Google authentication successful', 'user': idinfo})
+    except ValueError as e:
+        return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
+
+@api_view(['POST'])
 def echo_message(request):
     """API endpoint that echoes back the message sent from frontend"""
     try:

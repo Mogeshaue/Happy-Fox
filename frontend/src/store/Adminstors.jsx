@@ -213,6 +213,10 @@ const useCourseStore = create((set) => ({
       set({ errorInvitations: error.message });
     }
   },
+
+  // --- Auth User ---
+  authUser: null,
+  setAuthUser: (user) => set(() => ({ authUser: user })),
 }));
 
 export default useCourseStore;
