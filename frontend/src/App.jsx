@@ -5,15 +5,19 @@ import StudentRoute from './Studentsdashboard/Studentsroute'
 import Welcome from './Welcome/Welcome'
 import Mroute from './mentor/Mroute'
 
+import useCourseStore from './store/Adminstors'
+
 
 const App = () => {
+  const {authUser} =useCourseStore()
+  console.log(authUser)
   return (
     <div>
 
      
       {/* <AdminRoute/> */}
-      {/* <Welcome/> */}
-      <Mroute/>
+      <Welcome/>
+      {/* <Mroute/> */}
       {/* <StudentRoute/> */}
      
     </div>

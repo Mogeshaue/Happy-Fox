@@ -47,6 +47,10 @@ const useCourseStore = create((set) => ({
     set((state) => ({
       mentors: state.mentors.filter((mentor) => mentor.id !== id),
     })),
+
+  // --- Auth User ---
+  authUser: null,
+  setAuthUser: (user) => set(() => ({ authUser: user })),
 }));
 
 export default useCourseStore;

@@ -27,6 +27,6 @@ urlpatterns = [
     path('api/student/register/', student_views.register_student, name='register_student'),
     path('api/student/', student_views.get_student, name='get_student'),
     path('api/students/', student_views.list_students, name='list_students'),
-    path('api/auth/google/', student_views.google_oauth_login, name='google_oauth_login'),
+    path('api/auth/google/', student_views.google_auth, name='google_auth'),
     path('api/auth/test/', student_views.test_student_login, name='test_student_login'),
 ]
