@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 
+
 const SimpleStudentLogin = ({ onLoginSuccess, onLoginError }) => {
   const [email, setEmail] = useState('');
   const [firstName, setFirstName] = useState('');

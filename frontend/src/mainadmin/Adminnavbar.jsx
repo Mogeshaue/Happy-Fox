@@ -3,7 +3,7 @@ import React from 'react';
 const Adminnavbar = () => {
   return (
     <div className="bg-white shadow-md px-6 py-4 flex items-center justify-between">
-      <h1 className="text-xl font-bold text-gray-800">Admin Dashboard</h1>
+      <h1 className="text-xl font-bold text-gray-800"></h1>
       
       <div className="flex items-center gap-4">
         {/* Example items */}

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 
-const GoogleOAuthLogin = ({ onLoginSuccess, onLoginError }) => {
+const GoogleOauth = ({ onLoginSuccess, onLoginError }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [isGoogleLoaded, setIsGoogleLoaded] = useState(false);
 
@@ -228,4 +228,4 @@ const GoogleOAuthLogin = ({ onLoginSuccess, onLoginError }) => {
   );
 };
 
-export default GoogleOAuthLogin;
+export default GoogleOauth;
