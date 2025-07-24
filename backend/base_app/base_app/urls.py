@@ -17,10 +17,16 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 from . import views
+from students import views as student_views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/hello/', views.hello_world, name='hello_world'),
     path('api/echo/', views.echo_message, name='echo_message'),
     path('api/data/', views.get_data, name='get_data'),
+    path('api/student/register/', student_views.register_student, name='register_student'),
+    path('api/student/', student_views.get_student, name='get_student'),
+    path('api/students/', student_views.list_students, name='list_students'),
+    path('api/auth/google/', student_views.google_oauth_login, name='google_oauth_login'),
+    path('api/auth/test/', student_views.test_student_login, name='test_student_login'),
 ]
