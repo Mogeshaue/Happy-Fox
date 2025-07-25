@@ -237,10 +237,10 @@ class OrganizationStatsView(APIView):
         latest_analytics = organization.adminanalytics_set.first()
         api_usage = latest_analytics.api_calls if latest_analytics else 0
         
-        # Monthly active users
-        monthly_active_users = User.objects.filter(
-            userorganization__org=organization,
-            last_login__gte=timezone.now() - timedelta(days=30)
+        # Monthly active users (based on last organization access)
+        monthly_active_users = UserOrganization.objects.filter(
+            org=organization,
+            last_accessed__gte=timezone.now() - timedelta(days=30)
         ).count()
 
         stats_data = {
@@ -303,8 +303,10 @@ class UserManagementView(APIView):
 
         # Summary stats
         total_users = user_qs.count()
-        active_users = user_qs.filter(
-            last_login__gte=timezone.now() - timedelta(days=30)
+        # Active users based on organization access
+        active_users = UserOrganization.objects.filter(
+            user__in=user_qs,
+            last_accessed__gte=timezone.now() - timedelta(days=30)
         ).count()
         new_users_this_week = user_qs.filter(
             created_at__gte=timezone.now() - timedelta(days=7)

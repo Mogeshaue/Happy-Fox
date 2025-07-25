@@ -199,12 +199,12 @@ def update_daily_user_analytics(organization):
         created_at__date=today
     ).count()
     
-    # Active users (logged in within last 30 days)
+    # Active users (last accessed organization within last 30 days)
     thirty_days_ago = timezone.now() - timedelta(days=30)
-    active_users = User.objects.filter(
-        userorganization__org=organization,
-        last_login__gte=thirty_days_ago
-    ).distinct().count()
+    active_users = UserOrganization.objects.filter(
+        org=organization,
+        last_accessed__gte=thirty_days_ago
+    ).count()
     
     analytics.total_users = total_users
     analytics.new_users = new_users_today
@@ -359,10 +359,10 @@ def update_daily_admin_analytics():
         ).count()
         
         thirty_days_ago = timezone.now() - timedelta(days=30)
-        active_users = User.objects.filter(
-            userorganization__org=org,
-            last_login__gte=thirty_days_ago
-        ).distinct().count()
+        active_users = UserOrganization.objects.filter(
+            org=org,
+            last_accessed__gte=thirty_days_ago
+        ).count()
         
         # Content metrics
         total_courses = Course.objects.filter(org=org).count()
