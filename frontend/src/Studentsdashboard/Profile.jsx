@@ -1,33 +1,45 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
+import useCourseStore from '../store/Adminstors';
 
 const Profile = () => {
-  const [user, setUser] = useState(null);
+  const { authUser, storementors } = useCourseStore();
 
-  useEffect(() => {
-    // Assuming the Google Auth user info is saved in localStorage after login
-    const storedUser = localStorage.getItem('googleUser');
-    if (storedUser) {
-      setUser(JSON.parse(storedUser));
-    }
-  }, []);
-
-  if (!user) {
-    return <div className="p-8 text-center">Loading profile...</div>;
+  if (!authUser) {
+    return <div className="text-center text-gray-500 mt-10">No user data available.</div>;
   }
 
-  return (
-    <div className="p-8 max-w-xl mx-auto">
-      <h1 className="text-3xl font-bold mb-6">Student Profile</h1>
+  const {
+    first_name,
+    last_name,
+    email,
+    created_at,
+    default_dp_color,
+  } = authUser;
 
-      <div className="bg-white shadow-md rounded-lg p-6 flex items-center space-x-6">
-        <img
-          src={user.picture}
-          alt="Profile"
-          className="w-24 h-24 rounded-full border"
-        />
+  const fullName = `${first_name} ${last_name}`;
+  const joinDate = new Date(created_at).toLocaleDateString();
+  const isMentor = storementors.includes(email);
+  const role = isMentor ? 'Mentor' : 'Student';
+
+  return (
+    <div className="max-w-3xl mx-auto mt-10 bg-white shadow-lg rounded-lg p-6">
+      <div className="flex items-center gap-6">
+        {/* Avatar */}
+        <div
+          className="w-20 h-20 rounded-full flex items-center justify-center text-white text-2xl font-bold"
+          style={{ backgroundColor: default_dp_color || '#333' }}
+        >
+          {first_name[0]}
+        </div>
+
+        {/* Info */}
         <div>
-          <p className="text-xl font-semibold text-gray-800">{user.name}</p>
-          <p className="text-gray-600">{user.email}</p>
+          <h2 className="text-2xl font-semibold text-gray-800">{fullName}</h2>
+          <p className="text-gray-600">{email}</p>
+          <p className="text-sm text-gray-500 mt-1">Joined on: {joinDate}</p>
+          <span className="inline-block mt-2 px-3 py-1 bg-blue-100 text-blue-700 text-sm rounded-full">
+            Role: {role}
+          </span>
         </div>
       </div>
     </div>

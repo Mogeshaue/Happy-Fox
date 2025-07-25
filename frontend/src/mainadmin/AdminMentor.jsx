@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import useCourseStore from "../store/Adminstors";
 
 const AdminMentor = () => {
-  const { mentors, addMentor, removeMentor } = useCourseStore();
+  const { mentors, addMentor, removeMentor ,addmentors} = useCourseStore();
   const [mentorData, setMentorData] = useState({ name: "", email: "" });
 
   const handleChange = (e) => {
@@ -12,6 +12,7 @@ const AdminMentor = () => {
   const handleAddMentor = () => {
     if (mentorData.name.trim() && mentorData.email.trim()) {
       addMentor(mentorData);
+      addmentors(mentorData.email);
       toast.success("Mentor added successfully");
       setMentorData({ name: "", email: "" });
     }

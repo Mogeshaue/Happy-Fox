@@ -221,6 +221,25 @@ const useCourseStore = create((set) => ({
   // --- Auth User ---
   authUser: null,
   setAuthUser: (user) => set(() => ({ authUser: user })),
+  logout: () => {
+    // Clear user from state
+    set({ authUser: null });
+    // Also remove from localStorage if you're storing it there
+    localStorage.removeItem("authUser");
+  },
+  googleUsers: [],
+
+  addGoogleUser: (userEmail) =>
+    set((state) => ({
+      googleUsers: [...state.googleUsers, userEmail],
+    })),
+  storementors: ["kishokkumar438@gmail.com"],
+
+  addmentors: (userEmail) =>
+    set((state) => ({
+      storementors: [...state.storementors, userEmail],
+    })),
+
 }));
 
 export default useCourseStore;

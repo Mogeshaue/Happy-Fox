@@ -78,7 +78,7 @@ def google_auth(request):
     if not token:
         return Response({'error': 'No token provided'}, status=status.HTTP_400_BAD_REQUEST)
     try:
-        CLIENT_ID = '969085485835-loqiaoo05j21ibqd6evgobca07cj0ror.apps.googleusercontent.com'
+        CLIENT_ID = '305743130332-tsr28ldgeeadlrgr7udg816o0ll8iean.apps.googleusercontent.com'
         idinfo = id_token.verify_oauth2_token(token, google_requests.Request(), CLIENT_ID)
         email = idinfo.get('email')
         first_name = idinfo.get('given_name', '')

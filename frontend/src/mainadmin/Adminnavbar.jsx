@@ -1,18 +1,38 @@
 import React from 'react';
+import useCourseStore from '../store/Adminstors';
 
 const Adminnavbar = () => {
+  const { authUser, logout } = useCourseStore();
+
+  const handleLogout = () => {
+    logout();
+    // You may also want to redirect after logout
+  };
+
+  if (!authUser) return null;
+
+  const { first_name, default_dp_color } = authUser;
+
   return (
     <div className="bg-white shadow-md px-6 py-4 flex items-center justify-between">
-      <h1 className="text-xl font-bold text-gray-800"></h1>
-      
+      <h1 className="text-xl font-bold text-blue-600">Admin Dashboard</h1>
+
       <div className="flex items-center gap-4">
-        {/* Example items */}
-        <span className="text-gray-600">Admin</span>
-        <img
-          src="https://via.placeholder.com/32"
-          alt="profile"
-          className="w-8 h-8 rounded-full"
-        />
+        <div
+          className="w-10 h-10 rounded-full flex items-center justify-center text-white text-lg font-semibold"
+          style={{ backgroundColor: default_dp_color || '#1e3a8a' }} // fallback color
+        >
+          {first_name?.[0] || 'A'}
+        </div>
+
+        <span className="text-blue-600 font-medium">{first_name}</span>
+
+        <button
+          onClick={handleLogout}
+          className="bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded text-sm"
+        >
+          Logout
+        </button>
       </div>
     </div>
   );
