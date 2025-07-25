@@ -139,38 +139,30 @@ const MentorDashboard = () => {
   const fetchDashboardData = async () => {
     try {
       setError(null);
-      
-      // ACTUAL API CALL - Testing backend connection
+      setLoading(true);
+      // Replace with your real backend endpoint for mentor dashboard
+      // Example: /mentor/api/dashboard/ or similar
       const response = await fetch('http://127.0.0.1:8000/mentor/api/dashboard/', {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
-          // 'Authorization': `Bearer ${localStorage.getItem('auth_token')}`, // Add if authentication is needed
+          // 'Authorization': `Bearer ${localStorage.getItem('auth_token')}`,
         },
       });
-
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
-
       const data = await response.json();
-      
-      if (data.success) {
+      // Adjust this according to your backend response structure
+      if (data.data) {
         setDashboardData(data.data);
+      } else if (data.results) {
+        setDashboardData(data.results);
+      } else if (Array.isArray(data)) {
+        setDashboardData(data);
       } else {
-        throw new Error(data.message || 'Failed to fetch dashboard data');
+        setDashboardData(null);
       }
-      
-      // FALLBACK TO MOCK DATA if API fails (for development)
-      // Comment out the lines below once API is stable
-      /*
-      // Simulate API delay for realistic UX
-      await new Promise(resolve => setTimeout(resolve, 800));
-      
-      // Use mock data for now
-      setDashboardData(MOCK_DASHBOARD_DATA);
-      */
-      
     } catch (err) {
       console.error('Dashboard fetch error:', err);
       setError(err.message || 'Failed to load dashboard data');

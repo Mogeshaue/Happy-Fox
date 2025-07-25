@@ -88,40 +88,34 @@ const MentorProfile = () => {
   const fetchMentorProfile = async () => {
     try {
       setError(null);
-      
-      // MOCK DATA USAGE
-      // TODO: Replace this with actual API call
-      // Example API call (commented out):
-      /*
+      setLoading(true);
+      // Replace with your real backend endpoint for mentor profile
+      // Example: /mentor/api/mentor-profiles/me/ or similar
       const response = await fetch('http://127.0.0.1:8000/mentor/api/mentor-profiles/me/', {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
-          // 'Authorization': `Bearer ${localStorage.getItem('auth_token')}`, // Add if authentication is needed
+          // 'Authorization': `Bearer ${localStorage.getItem('auth_token')}`,
         },
       });
-
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
-
       const data = await response.json();
-      
-      if (data.success) {
+      // Adjust this according to your backend response structure
+      if (data.data) {
         setMentorProfile(data.data);
         initializeFormData(data.data);
+      } else if (data.results) {
+        setMentorProfile(data.results);
+        initializeFormData(data.results);
+      } else if (Array.isArray(data)) {
+        setMentorProfile(data);
+        initializeFormData(data);
       } else {
-        throw new Error(data.message || 'Failed to fetch mentor profile');
+        setMentorProfile(null);
+        initializeFormData({});
       }
-      */
-
-      // Simulate API delay for realistic UX
-      await new Promise(resolve => setTimeout(resolve, 600));
-      
-      // Use mock data for now
-      setMentorProfile(MOCK_MENTOR_PROFILE);
-      initializeFormData(MOCK_MENTOR_PROFILE);
-      
     } catch (err) {
       console.error('Profile fetch error:', err);
       setError(err.message || 'Failed to load mentor profile');
@@ -412,7 +406,7 @@ const MentorProfile = () => {
                   </div>
                 ) : (
                   <div className="flex flex-wrap gap-2">
-                    {mentorProfile?.expertise_areas?.length > 0 ? (
+                    {Array.isArray(mentorProfile?.expertise_areas) && mentorProfile.expertise_areas.length > 0 ? (
                       mentorProfile.expertise_areas.map((area, index) => (
                         <span
                           key={index}
