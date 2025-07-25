@@ -294,7 +294,7 @@ class StudentProfile(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return f"Student: {self.user.full_name}"
+        return f"Student: {self.user.get_full_name() or self.user.email}"
 
     @property
     def completion_rate(self):
@@ -379,7 +379,7 @@ class StudentEnrollment(models.Model):
         ordering = ['-enrolled_at']
 
     def __str__(self):
-        return f"{self.student.full_name} - {self.course.name} ({self.status})"
+        return f"{self.student.get_full_name() or self.student.email} - {self.course.name} ({self.status})"
 
     @property
     def is_overdue(self):
@@ -452,7 +452,7 @@ class LearningSession(models.Model):
         ordering = ['-started_at']
 
     def __str__(self):
-        return f"{self.student.full_name} - {self.session_type} ({self.started_at.strftime('%Y-%m-%d %H:%M')})"
+        return f"{self.student.get_full_name() or self.student.email} - {self.session_type} ({self.started_at.strftime('%Y-%m-%d %H:%M')})"
 
     def end_session(self):
         """Mark session as completed and calculate duration"""
@@ -527,7 +527,7 @@ class AssignmentSubmission(models.Model):
         ordering = ['-submitted_at', '-created_at']
 
     def __str__(self):
-        return f"{self.student.full_name} - {self.task.title} (v{self.version})"
+        return f"{self.student.get_full_name() or self.student.email} - {self.task.title} (v{self.version})"
 
     def submit(self):
         """Submit the assignment"""
@@ -644,7 +644,7 @@ class StudyGroupMembership(models.Model):
         ordering = ['-joined_at']
 
     def __str__(self):
-        return f"{self.student.full_name} - {self.study_group.name} ({self.role})"
+        return f"{self.student.get_full_name() or self.student.email} - {self.study_group.name} ({self.role})"
 
     def approve(self, approver=None):
         """Approve membership"""
@@ -701,7 +701,7 @@ class LearningResource(models.Model):
         ordering = ['-created_at']
 
     def __str__(self):
-        return f"{self.title} ({self.resource_type}) - {self.student.full_name}"
+        return f"{self.title} ({self.resource_type}) - {self.student.get_full_name() or self.student.email}"
 
     def access(self):
         """Track resource access"""
@@ -773,7 +773,7 @@ class LearningGoal(models.Model):
         ordering = ['target_date', '-priority']
 
     def __str__(self):
-        return f"{self.title} - {self.student.full_name}"
+        return f"{self.title} - {self.student.get_full_name() or self.student.email}"
 
     def mark_completed(self):
         """Mark goal as completed"""
@@ -852,7 +852,7 @@ class QuizAttempt(models.Model):
         ordering = ['-started_at']
 
     def __str__(self):
-        return f"{self.student.full_name} - {self.task.title} (Attempt {self.attempt_number})"
+        return f"{self.student.get_full_name() or self.student.email} - {self.task.title} (Attempt {self.attempt_number})"
 
     def complete(self):
         """Complete the quiz attempt"""
@@ -936,7 +936,7 @@ class StudentNotification(models.Model):
         ordering = ['-created_at']
 
     def __str__(self):
-        return f"{self.title} - {self.recipient.full_name}"
+        return f"{self.title} - {self.recipient.get_full_name() or self.recipient.email}"
 
     def mark_as_read(self):
         """Mark notification as read"""
@@ -992,7 +992,7 @@ class StudentAnalytics(models.Model):
         ordering = ['-date']
 
     def __str__(self):
-        return f"Analytics for {self.student.full_name} on {self.date}"
+        return f"Analytics for {self.student.get_full_name() or self.student.email} on {self.date}"
 
 
 class StudentAchievement(models.Model):
@@ -1036,4 +1036,4 @@ class StudentAchievement(models.Model):
         ordering = ['-earned_at']
 
     def __str__(self):
-        return f"{self.title} - {self.student.full_name}" 
+        return f"{self.title} - {self.student.get_full_name() or self.student.email}" 

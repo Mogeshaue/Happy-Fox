@@ -108,7 +108,8 @@ class StudentProfileAdmin(admin.ModelAdmin):
     search_fields = ['user__email', 'user__first_name', 'user__last_name']
     readonly_fields = [
         'created_at', 'updated_at', 'completion_rate', 'current_courses_count',
-        'overall_grade', 'completed_courses', 'total_study_hours', 'streak_days'
+        'overall_grade', 'completed_courses', 'total_study_hours', 'streak_days',
+        'enrollment_date'
     ]
     
     fieldsets = (

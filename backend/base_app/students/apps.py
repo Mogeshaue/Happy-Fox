@@ -1,10 +1,10 @@
 from django.apps import AppConfig
 
 
-class StudentFlowConfig(AppConfig):
+class StudentsConfig(AppConfig):
     default_auto_field = 'django.db.models.BigAutoField'
-    name = 'student_flow'
-    verbose_name = 'Student Flow'
+    name = 'students'
+    verbose_name = 'Students'
 
     def ready(self):
-        import student_flow.signals 
+        import students.signals 

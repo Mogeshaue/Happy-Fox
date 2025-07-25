@@ -2,7 +2,7 @@ from django.urls import path, include
 from rest_framework.routers import DefaultRouter
 from . import views
 
-app_name = 'student_flow'
+app_name = 'student'
 
 # Router for ViewSets (if any)
 router = DefaultRouter()

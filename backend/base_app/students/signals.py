@@ -212,7 +212,7 @@ def handle_study_group_membership(sender, instance, created, **kwargs):
                 notification_type=StudentNotification.Type.STUDY_GROUP,
                 priority=StudentNotification.Priority.MEDIUM,
                 title='New Study Group Join Request',
-                message=f'{instance.student.full_name} wants to join "{instance.study_group.name}"',
+                message=f'{instance.student.get_full_name() or instance.student.email} wants to join "{instance.study_group.name}"',
                 study_group=instance.study_group,
                 action_url=f'/study-groups/{instance.study_group.uuid}/members/',
                 action_text='Review Request'
@@ -345,8 +345,8 @@ def send_enrollment_email(enrollment):
             'organization': enrollment.course.org.name
         }
         
-        html_message = render_to_string('student_flow/emails/enrollment_welcome.html', context)
-        plain_message = render_to_string('student_flow/emails/enrollment_welcome.txt', context)
+        html_message = render_to_string('student/emails/enrollment_welcome.html', context)
+        plain_message = render_to_string('student/emails/enrollment_welcome.txt', context)
         
         send_mail(
             subject=subject,
@@ -386,8 +386,8 @@ def send_notification_email(notification):
             'course_name': notification.course.name if notification.course else None
         }
         
-        html_message = render_to_string('student_flow/emails/notification.html', context)
-        plain_message = render_to_string('student_flow/emails/notification.txt', context)
+        html_message = render_to_string('student/emails/notification.html', context)
+        plain_message = render_to_string('student/emails/notification.txt', context)
         
         send_mail(
             subject=subject,
@@ -421,7 +421,7 @@ def notify_assignment_submitted(assignment):
             notification_type=StudentNotification.Type.COURSE_UPDATE,
             priority=StudentNotification.Priority.MEDIUM,
             title='Assignment Submitted for Review',
-            message=f'{assignment.student.full_name} submitted "{assignment.task.title}"',
+            message=f'{assignment.student.get_full_name() or assignment.student.email} submitted "{assignment.task.title}"',
             course=assignment.course,
             task=assignment.task,
             action_url=f'/assignments/{assignment.uuid}/grade/',

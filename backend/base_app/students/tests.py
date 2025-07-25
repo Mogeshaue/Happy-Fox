@@ -540,7 +540,7 @@ class StudentDashboardAPITests(StudentFlowAPITestCase):
     def test_dashboard_access_student(self):
         """Test dashboard access for students"""
         self.client.force_authenticate(user=self.student_user)
-        url = reverse('student_flow:student-dashboard')
+        url = reverse('student:student-dashboard')
         response = self.client.get(url)
         
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -551,7 +551,7 @@ class StudentDashboardAPITests(StudentFlowAPITestCase):
     def test_dashboard_access_denied_non_student(self):
         """Test dashboard access denied for non-students"""
         self.client.force_authenticate(user=self.admin_user)
-        url = reverse('student_flow:student-dashboard')
+        url = reverse('student:student-dashboard')
         response = self.client.get(url)
         
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
@@ -563,7 +563,7 @@ class StudentProfileAPITests(StudentFlowAPITestCase):
     def test_get_student_profile(self):
         """Test getting student profile"""
         self.client.force_authenticate(user=self.student_user)
-        url = reverse('student_flow:student-profile')
+        url = reverse('student:student-profile')
         response = self.client.get(url)
         
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -572,7 +572,7 @@ class StudentProfileAPITests(StudentFlowAPITestCase):
     def test_update_student_profile(self):
         """Test updating student profile"""
         self.client.force_authenticate(user=self.student_user)
-        url = reverse('student_flow:student-profile')
+        url = reverse('student:student-profile')
         data = {
             'bio': 'Updated bio',
             'learning_style': 'auditory',
@@ -592,7 +592,7 @@ class LearningSessionAPITests(StudentFlowAPITestCase):
     def test_create_learning_session(self):
         """Test creating learning session"""
         self.client.force_authenticate(user=self.student_user)
-        url = reverse('student_flow:session-list')
+        url = reverse('student:session-list')
         data = {
             'session_type': 'learning_material',
             'course_id': self.course.id,
@@ -613,7 +613,7 @@ class LearningSessionAPITests(StudentFlowAPITestCase):
         )
         
         self.client.force_authenticate(user=self.student_user)
-        url = reverse('student_flow:session-list')
+        url = reverse('student:session-list')
         response = self.client.get(url)
         
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -626,7 +626,7 @@ class StudyGroupAPITests(StudentFlowAPITestCase):
     def test_create_study_group(self):
         """Test creating study group"""
         self.client.force_authenticate(user=self.student_user)
-        url = reverse('student_flow:study-group-list')
+        url = reverse('student:study-group-list')
         data = {
             'name': 'Python Study Group',
             'description': 'Learn Python together',
@@ -662,7 +662,7 @@ class StudyGroupAPITests(StudentFlowAPITestCase):
         )
         
         self.client.force_authenticate(user=other_user)
-        url = reverse('student_flow:join-study-group', kwargs={'group_id': study_group.uuid})
+        url = reverse('student:join-study-group', kwargs={'group_id': study_group.uuid})
         response = self.client.post(url)
         
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -675,7 +675,7 @@ class LearningGoalAPITests(StudentFlowAPITestCase):
     def test_create_learning_goal(self):
         """Test creating learning goal"""
         self.client.force_authenticate(user=self.student_user)
-        url = reverse('student_flow:goal-list')
+        url = reverse('student:goal-list')
         data = {
             'title': 'Master Python',
             'description': 'Learn Python fundamentals',
@@ -699,7 +699,7 @@ class LearningGoalAPITests(StudentFlowAPITestCase):
         )
         
         self.client.force_authenticate(user=self.student_user)
-        url = reverse('student_flow:complete-goal', kwargs={'goal_id': goal.uuid})
+        url = reverse('student:complete-goal', kwargs={'goal_id': goal.uuid})
         response = self.client.put(url)
         
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -721,7 +721,7 @@ class StudentNotificationAPITests(StudentFlowAPITestCase):
         )
         
         self.client.force_authenticate(user=self.student_user)
-        url = reverse('student_flow:notification-list')
+        url = reverse('student:notification-list')
         response = self.client.get(url)
         
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -737,7 +737,7 @@ class StudentNotificationAPITests(StudentFlowAPITestCase):
         )
         
         self.client.force_authenticate(user=self.student_user)
-        url = reverse('student_flow:mark-notification-read', 
+        url = reverse('student:mark-notification-read', 
                      kwargs={'notification_id': notification.uuid})
         response = self.client.put(url)
         
@@ -760,7 +760,7 @@ class StudentStatsAPITests(StudentFlowAPITestCase):
         )
         
         self.client.force_authenticate(user=self.student_user)
-        url = reverse('student_flow:student-stats')
+        url = reverse('student:student-stats')
         response = self.client.get(url)
         
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -857,7 +857,7 @@ class StudentSignalTests(StudentFlowTestCase):
         self.student_profile.refresh_from_db()
         self.assertGreaterEqual(self.student_profile.total_study_hours, initial_hours)
     
-    @patch('student_flow.signals.send_mail')
+    @patch('student.signals.send_mail')
     def test_enrollment_email_sent(self, mock_send_mail):
         """Test enrollment email is sent"""
         # Enable email notifications
@@ -886,7 +886,7 @@ class StudentUtilityTests(StudentFlowTestCase):
     def test_available_courses_api(self):
         """Test available courses API"""
         self.client.force_authenticate(user=self.student_user)
-        url = reverse('student_flow:available-courses')
+        url = reverse('student:available-courses')
         response = self.client.get(url)
         
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -901,7 +901,7 @@ class StudentUtilityTests(StudentFlowTestCase):
         )
         
         self.client.force_authenticate(user=self.student_user)
-        url = reverse('student_flow:student-calendar')
+        url = reverse('student:student-calendar')
         response = self.client.get(url)
         
         self.assertEqual(response.status_code, status.HTTP_200_OK)
