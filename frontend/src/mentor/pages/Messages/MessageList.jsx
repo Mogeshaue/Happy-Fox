@@ -85,38 +85,30 @@ const MessageList = () => {
   const fetchMessageThreads = async () => {
     try {
       setError(null);
-      
-      // MOCK DATA USAGE
-      // TODO: Replace this with actual API call
-      // Example API call (commented out):
-      /*
+      setLoading(true);
+      // Replace with your real backend endpoint for mentor messages
+      // Example: /mentor/api/messages/ or similar
       const response = await fetch('http://127.0.0.1:8000/mentor/api/messages/', {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
-          // 'Authorization': `Bearer ${localStorage.getItem('auth_token')}`, // Add if authentication is needed
+          // 'Authorization': `Bearer ${localStorage.getItem('auth_token')}`,
         },
       });
-
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
-
       const data = await response.json();
-      
-      if (data.success) {
+      // Adjust this according to your backend response structure
+      if (data.data) {
         setThreads(data.data);
+      } else if (data.results) {
+        setThreads(data.results);
+      } else if (Array.isArray(data)) {
+        setThreads(data);
       } else {
-        throw new Error(data.message || 'Failed to fetch message threads');
+        setThreads([]);
       }
-      */
-
-      // Simulate API delay
-      await new Promise(resolve => setTimeout(resolve, 500));
-      
-      // Use mock data
-      setThreads(MOCK_MESSAGE_THREADS);
-      
     } catch (err) {
       console.error('Messages fetch error:', err);
       setError(err.message || 'Failed to load messages');

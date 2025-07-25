@@ -183,42 +183,33 @@ const SessionList = () => {
   const fetchSessions = async (filters = {}) => {
     try {
       setError(null);
-      
-      // MOCK DATA USAGE
-      // TODO: Replace this with actual API call
-      // Example API call (commented out):
-      /*
+      setLoading(true);
+      // Replace with your real backend endpoint for mentor sessions
+      // Example: /mentor/api/sessions/ or similar
       const queryParams = new URLSearchParams({
         ...filters
       });
-
       const response = await fetch(`http://127.0.0.1:8000/mentor/api/sessions/?${queryParams}`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
-          // 'Authorization': `Bearer ${localStorage.getItem('auth_token')}`, // Add if authentication is needed
+          // 'Authorization': `Bearer ${localStorage.getItem('auth_token')}`,
         },
       });
-
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
-
       const data = await response.json();
-      
-      if (data.success) {
+      // Adjust this according to your backend response structure
+      if (Array.isArray(data)) {
+        setSessions(data);
+      } else if (data.results) {
+        setSessions(data.results);
+      } else if (data.data) {
         setSessions(data.data);
       } else {
-        throw new Error(data.message || 'Failed to fetch sessions');
+        setSessions([]);
       }
-      */
-
-      // Simulate API delay for realistic UX
-      await new Promise(resolve => setTimeout(resolve, 700));
-      
-      // Use mock data for now
-      setSessions(MOCK_SESSIONS);
-      
     } catch (err) {
       console.error('Sessions fetch error:', err);
       setError(err.message || 'Failed to load sessions');
