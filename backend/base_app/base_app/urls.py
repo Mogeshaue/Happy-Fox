@@ -18,25 +18,13 @@ from django.contrib import admin
 from django.urls import path
 from . import views
 from students import views as student_views
-from rest_framework.routers import DefaultRouter
-from students.views import CourseViewSet, CohortViewSet, TeamViewSet, InvitationViewSet
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/hello/', views.hello_world, name='hello_world'),
     path('api/echo/', views.echo_message, name='echo_message'),
     path('api/data/', views.get_data, name='get_data'),
-    path('api/student/register/', student_views.register_student, name='register_student'),
-    path('api/student/', student_views.get_student, name='get_student'),
-    path('api/students/', student_views.list_students, name='list_students'),
-    path('api/auth/google/', student_views.google_auth, name='google_auth'),
-    path('api/auth/test/', student_views.test_student_login, name='test_student_login'),
+    path('api/student/profile/', student_views.StudentProfileView.as_view(), name='student_profile'),
+    path('api/student/create/', student_views.CreateStudentProfileView.as_view(), name='create_student_profile'),
+    path('api/student/dashboard/', student_views.StudentDashboardView.as_view(), name='student_dashboard'),
 ]
-
-router = DefaultRouter()
-router.register(r'api/admin/courses', CourseViewSet, basename='admin-courses')
-router.register(r'api/admin/cohorts', CohortViewSet, basename='admin-cohorts')
-router.register(r'api/admin/teams', TeamViewSet, basename='admin-teams')
-router.register(r'api/admin/invitations', InvitationViewSet, basename='admin-invitations')
-
-urlpatterns += router.urls
