@@ -1,77 +1,121 @@
 import React, { useState } from 'react';
 import useCourseStore from '../store/Adminstors';
-
+import {
+  Box,
+  Typography,
+  Card,
+  Grid,
+  TextField,
+  Button,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Paper,
+  IconButton,
+} from '@mui/material';
+import DeleteIcon from '@mui/icons-material/Delete';
+import Loader from '../components/common/Loader';
+import { useSnackbar } from 'notistack';
 
 const AdminStudents = () => {
   const { students, addStudent, removeStudent } = useCourseStore();
   const [formData, setFormData] = useState({ name: '', email: '' });
+  const [adding, setAdding] = useState(false);
+  const [deletingId, setDeletingId] = useState(null);
+  const { enqueueSnackbar } = useSnackbar();
 
-  const handleAdd = () => {
+  const handleAdd = async () => {
     if (!formData.name.trim() || !formData.email.trim()) return;
-    addStudent(formData);
-    toast.success("Student added successfully");
+    setAdding(true);
+    await addStudent(formData);
+    setAdding(false);
+    enqueueSnackbar('Student added successfully', { variant: 'success' });
     setFormData({ name: '', email: '' });
   };
 
+  const handleDelete = async (id) => {
+    setDeletingId(id);
+    await removeStudent(id);
+    setDeletingId(null);
+    enqueueSnackbar('Student removed', { variant: 'info' });
+  };
+
+  if (!students) return <Loader />;
+
   return (
-    <div className="min-h-screen p-6 bg-white text-black">
-      <h2 className="text-3xl font-bold mb-6">Student Management</h2>
-
-      {/* Add Student Form */}
-      <div className="bg-gray-100 p-5 rounded shadow-sm border border-gray-300 mb-8">
-        <h3 className="text-xl font-semibold mb-4">Add New Student</h3>
-        <div className="flex flex-col md:flex-row gap-4">
-          <input
-            type="text"
-            placeholder="Student Name"
-            value={formData.name}
-            onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-            className="border border-gray-300 rounded px-4 py-2 w-full bg-white"
-          />
-          <input
-            type="email"
-            placeholder="Student Email"
-            value={formData.email}
-            onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-            className="border border-gray-300 rounded px-4 py-2 w-full bg-white"
-          />
-          <button
-            onClick={handleAdd}
-            className="bg-green-600 text-white px-6 py-2 rounded hover:bg-green-800 transition"
-          >
-            Add
-          </button>
-        </div>
-      </div>
-
-      {/* Student List */}
-      <div>
-        <h3 className="text-xl font-semibold mb-4">Student List</h3>
+    <Box sx={{ p: { xs: 2, md: 6 } }}>
+      <Typography variant="h4" fontWeight={700} mb={4} color="text.primary">
+        Student Management
+      </Typography>
+      <Card sx={{ p: 4, mb: 4 }}>
+        <Typography variant="h6" mb={2}>Add New Student</Typography>
+        <Grid container spacing={2} alignItems="center">
+          <Grid item xs={12} md={5}>
+            <TextField
+              label="Student Name"
+              value={formData.name}
+              onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+              fullWidth
+              required
+            />
+          </Grid>
+          <Grid item xs={12} md={5}>
+            <TextField
+              label="Student Email"
+              value={formData.email}
+              onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+              fullWidth
+              required
+            />
+          </Grid>
+          <Grid item xs={12} md={2}>
+            <Button
+              variant="contained"
+              color="success"
+              onClick={handleAdd}
+              fullWidth
+              disabled={adding}
+            >
+              {adding ? 'Adding...' : 'Add'}
+            </Button>
+          </Grid>
+        </Grid>
+      </Card>
+      <Box>
+        <Typography variant="h6" mb={2}>Student List</Typography>
         {students.length === 0 ? (
-          <p className="text-gray-500">No students added yet.</p>
+          <Typography color="text.secondary">No students added yet.</Typography>
         ) : (
-          <ul className="space-y-3">
-            {students.map((student) => (
-              <li
-                key={student.id}
-                className="bg-gray-100 border border-gray-300 p-4 rounded shadow-sm flex justify-between items-center"
-              >
-                <div>
-                  <p className="font-medium">{student.name}</p>
-                  <p className="text-sm text-gray-600">{student.email}</p>
-                </div>
-                <button
-                  onClick={() => removeStudent(student.id)}
-                  className="text-red-500 hover:underline text-sm"
-                >
-                  Remove
-                </button>
-              </li>
-            ))}
-          </ul>
+          <TableContainer component={Paper}>
+            <Table>
+              <TableHead>
+                <TableRow>
+                  <TableCell>Name</TableCell>
+                  <TableCell>Email</TableCell>
+                  <TableCell align="right">Actions</TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {students.map((student) => (
+                  <TableRow key={student.id}>
+                    <TableCell>{student.name}</TableCell>
+                    <TableCell>{student.email}</TableCell>
+                    <TableCell align="right">
+                      <IconButton color="error" onClick={() => handleDelete(student.id)} disabled={deletingId === student.id}>
+                        <DeleteIcon />
+                      </IconButton>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </TableContainer>
         )}
-      </div>
-    </div>
+      </Box>
+    </Box>
   );
 };
 

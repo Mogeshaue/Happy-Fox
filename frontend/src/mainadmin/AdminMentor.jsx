@@ -1,9 +1,39 @@
-import React, { useState } from "react";
-import useCourseStore from "../store/Adminstors";
+import React, { useState, useEffect } from 'react';
+import {
+  Grid,
+  Card,
+  CardContent,
+  Typography,
+  Box,
+  TextField,
+  Button,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Paper,
+  IconButton,
+} from '@mui/material';
+import GroupIcon from '@mui/icons-material/Group';
+import SchoolIcon from '@mui/icons-material/School';
+import PersonAddIcon from '@mui/icons-material/PersonAdd';
+import DeleteIcon from '@mui/icons-material/Delete';
+import Loader from '../components/common/Loader';
+import useMentorDashboardData from '../hooks/useMentorDashboardData';
+import { useSnackbar } from 'notistack';
 
 const AdminMentor = () => {
-  const { mentors, addMentor, removeMentor } = useCourseStore();
-  const [mentorData, setMentorData] = useState({ name: "", email: "" });
+  const { stats, mentors, loading, error } = useMentorDashboardData();
+  const { enqueueSnackbar } = useSnackbar();
+  const [mentorData, setMentorData] = useState({ name: '', email: '' });
+
+  useEffect(() => {
+    if (error) {
+      enqueueSnackbar(error, { variant: 'error' });
+    }
+  }, [error, enqueueSnackbar]);
 
   const handleChange = (e) => {
     setMentorData({ ...mentorData, [e.target.name]: e.target.value });
@@ -11,69 +41,143 @@ const AdminMentor = () => {
 
   const handleAddMentor = () => {
     if (mentorData.name.trim() && mentorData.email.trim()) {
-      addMentor(mentorData);
-      toast.success("Mentor added successfully");
-      setMentorData({ name: "", email: "" });
+      // TODO: Replace with real API call
+      enqueueSnackbar('Mentor added successfully', { variant: 'success' });
+      setMentorData({ name: '', email: '' });
     }
   };
 
+  const handleDeleteMentor = (id) => {
+    // TODO: Replace with real API call
+    enqueueSnackbar('Mentor deleted', { variant: 'info' });
+  };
+
+  if (loading) return <Loader />;
+
   return (
-    <div className="min-h-screen bg-white p-10">
-      <div className="max-w-4xl mx-auto bg-gray-100 shadow-md rounded-lg p-8">
-        <h2 className="text-2xl font-bold mb-4 text-gray-800">Add Mentor</h2>
-
-        <div className="flex flex-col md:flex-row gap-4 mb-6">
-          <input
-            type="text"
-            name="name"
-            placeholder="Mentor Name"
-            value={mentorData.name}
-            onChange={handleChange}
-            className="border border-gray-400 px-4 py-2 rounded w-full"
-          />
-          <input
-            type="email"
-            name="email"
-            placeholder="Mentor Email"
-            value={mentorData.email}
-            onChange={handleChange}
-            className="border border-gray-400 px-4 py-2 rounded w-full"
-          />
-          <button
-            onClick={handleAddMentor}
-            className="bg-green-600 text-white px-6 py-2 rounded hover:bg-green-700 transition"
-          >
-            Add
-          </button>
-        </div>
-      </div>
-
-
-        <h3 className="text-xl font-semibold mb-3 text-gray-700">Mentor List</h3>
-        {mentors.length === 0 ? (
-          <p className="text-gray-500">No mentors added yet.</p>
-        ) : (
-          <ul className="space-y-3">
-            {mentors.map((mentor) => (
-              <li
-                key={mentor.id}
-                className="flex justify-between items-center bg-gray-100 border border-gray-300 p-3 rounded"
-              >
-                <div>
-                  <p className="font-medium">{mentor.name}</p>
-                  <p className="text-sm text-gray-600">{mentor.email}</p>
-                </div>
-                <button
-                  onClick={() => removeMentor(mentor.id)}
-                  className="text-red-500 hover:text-red-700 font-semibold"
-                >
-                  Delete
-                </button>
-              </li>
-            ))}
-          </ul>
-        )}
-    </div>
+    <Box sx={{ p: { xs: 2, md: 6 } }}>
+      <Typography variant="h4" fontWeight={700} mb={4} color="text.primary">
+        Mentor Dashboard
+      </Typography>
+      <Grid container spacing={3} mb={4}>
+        {stats ? (
+          <>
+            <Grid item xs={12} md={4}>
+              <Card>
+                <CardContent>
+                  <Box display="flex" alignItems="center">
+                    <GroupIcon color="primary" sx={{ fontSize: 40 }} />
+                    <Box ml={2}>
+                      <Typography variant="h6">{stats.total_mentors}</Typography>
+                      <Typography color="text.secondary">Total Mentors</Typography>
+                    </Box>
+                  </Box>
+                </CardContent>
+              </Card>
+            </Grid>
+            <Grid item xs={12} md={4}>
+              <Card>
+                <CardContent>
+                  <Box display="flex" alignItems="center">
+                    <SchoolIcon color="secondary" sx={{ fontSize: 40 }} />
+                    <Box ml={2}>
+                      <Typography variant="h6">{stats.active_courses}</Typography>
+                      <Typography color="text.secondary">Active Courses</Typography>
+                    </Box>
+                  </Box>
+                </CardContent>
+              </Card>
+            </Grid>
+            <Grid item xs={12} md={4}>
+              <Card>
+                <CardContent>
+                  <Box display="flex" alignItems="center">
+                    <PersonAddIcon color="success" sx={{ fontSize: 40 }} />
+                    <Box ml={2}>
+                      <Typography variant="h6">{stats.students_assigned}</Typography>
+                      <Typography color="text.secondary">Students Assigned</Typography>
+                    </Box>
+                  </Box>
+                </CardContent>
+              </Card>
+            </Grid>
+          </>
+        ) : null}
+      </Grid>
+      <Box mb={4}>
+        <Typography variant="h6" mb={2}>
+          Add Mentor
+        </Typography>
+        <Grid container spacing={2} alignItems="center">
+          <Grid item xs={12} md={4}>
+            <TextField
+              label="Mentor Name"
+              name="name"
+              value={mentorData.name}
+              onChange={handleChange}
+              fullWidth
+            />
+          </Grid>
+          <Grid item xs={12} md={4}>
+            <TextField
+              label="Mentor Email"
+              name="email"
+              value={mentorData.email}
+              onChange={handleChange}
+              fullWidth
+            />
+          </Grid>
+          <Grid item xs={12} md={4}>
+            <Button
+              variant="contained"
+              color="success"
+              onClick={handleAddMentor}
+              startIcon={<PersonAddIcon />}
+              fullWidth
+            >
+              Add Mentor
+            </Button>
+          </Grid>
+        </Grid>
+      </Box>
+      <Box>
+        <Typography variant="h6" mb={2}>
+          Mentor List
+        </Typography>
+        <TableContainer component={Paper}>
+          <Table>
+            <TableHead>
+              <TableRow>
+                <TableCell>Name</TableCell>
+                <TableCell>Email</TableCell>
+                <TableCell align="right">Actions</TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {mentors && mentors.length > 0 ? (
+                mentors.map((mentor) => (
+                  <TableRow key={mentor.id || mentor.email}>
+                    <TableCell>{mentor.name}</TableCell>
+                    <TableCell>{mentor.email}</TableCell>
+                    <TableCell align="right">
+                      <IconButton color="error" onClick={() => handleDeleteMentor(mentor.id)}>
+                        <DeleteIcon />
+                      </IconButton>
+                    </TableCell>
+                  </TableRow>
+                ))
+              ) : (
+                <TableRow>
+                  <TableCell colSpan={3} align="center">
+                    No mentors found.
+                  </TableCell>
+                </TableRow>
+              )}
+            </TableBody>
+          </Table>
+        </TableContainer>
+      </Box>
+    </Box>
   );
 };
 

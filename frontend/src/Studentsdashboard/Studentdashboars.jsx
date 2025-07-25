@@ -1,47 +1,61 @@
 
 import React from 'react';
-import { BookOpen, CheckCircle, FileText } from 'lucide-react';
+import { Grid, Card, CardContent, Typography, Box } from '@mui/material';
+import MenuBookIcon from '@mui/icons-material/MenuBook';
+import CheckCircleIcon from '@mui/icons-material/CheckCircle';
+import DescriptionIcon from '@mui/icons-material/Description';
 
 const Studentdashboars = () => {
   return (
-    <div className="p-8">
-      <h1 className="text-3xl font-bold mb-6 text-gray-800">Welcome to Your Dashboard</h1>
-
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+    <Box sx={{ p: { xs: 2, md: 6 } }}>
+      <Typography variant="h4" fontWeight={700} mb={4} color="text.primary">
+        Welcome to Your Dashboard
+      </Typography>
+      <Grid container spacing={3}>
         {/* My Courses */}
-        <div className="bg-white shadow-md rounded-lg p-6 hover:shadow-lg transition">
-          <div className="flex items-center gap-4">
-            <BookOpen className="text-indigo-600" size={32} />
-            <div>
-              <h2 className="text-xl font-semibold text-gray-700">My Courses</h2>
-              <p className="text-gray-500">View and manage your enrolled courses.</p>
-            </div>
-          </div>
-        </div>
-
+        <Grid item xs={12} md={4}>
+          <Card sx={{ transition: '0.2s', '&:hover': { boxShadow: 6 } }}>
+            <CardContent>
+              <Box display="flex" alignItems="center" gap={2}>
+                <MenuBookIcon color="primary" sx={{ fontSize: 40 }} />
+                <Box>
+                  <Typography variant="h6">My Courses</Typography>
+                  <Typography color="text.secondary">View and manage your enrolled courses.</Typography>
+                </Box>
+              </Box>
+            </CardContent>
+          </Card>
+        </Grid>
         {/* Completed Courses */}
-        <div className="bg-white shadow-md rounded-lg p-6 hover:shadow-lg transition">
-          <div className="flex items-center gap-4">
-            <CheckCircle className="text-green-600" size={32} />
-            <div>
-              <h2 className="text-xl font-semibold text-gray-700">Completed Courses</h2>
-              <p className="text-gray-500">Track your progress and achievements.</p>
-            </div>
-          </div>
-        </div>
-
-        {/* Certificates or Resources */}
-        <div className="bg-white shadow-md rounded-lg p-6 hover:shadow-lg transition">
-          <div className="flex items-center gap-4">
-            <FileText className="text-yellow-600" size={32} />
-            <div>
-              <h2 className="text-xl font-semibold text-gray-700">Resources</h2>
-              <p className="text-gray-500">Download certificates, notes, and more.</p>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
+        <Grid item xs={12} md={4}>
+          <Card sx={{ transition: '0.2s', '&:hover': { boxShadow: 6 } }}>
+            <CardContent>
+              <Box display="flex" alignItems="center" gap={2}>
+                <CheckCircleIcon color="success" sx={{ fontSize: 40 }} />
+                <Box>
+                  <Typography variant="h6">Completed Courses</Typography>
+                  <Typography color="text.secondary">Track your progress and achievements.</Typography>
+                </Box>
+              </Box>
+            </CardContent>
+          </Card>
+        </Grid>
+        {/* Resources */}
+        <Grid item xs={12} md={4}>
+          <Card sx={{ transition: '0.2s', '&:hover': { boxShadow: 6 } }}>
+            <CardContent>
+              <Box display="flex" alignItems="center" gap={2}>
+                <DescriptionIcon color="warning" sx={{ fontSize: 40 }} />
+                <Box>
+                  <Typography variant="h6">Resources</Typography>
+                  <Typography color="text.secondary">Download certificates, notes, and more.</Typography>
+                </Box>
+              </Box>
+            </CardContent>
+          </Card>
+        </Grid>
+      </Grid>
+    </Box>
   );
 };
 
