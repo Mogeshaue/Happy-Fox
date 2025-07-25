@@ -380,7 +380,7 @@ const MentorDashboard = () => {
             {/* Active Students List */}
             {dashboardData?.active_assignments && dashboardData.active_assignments.length > 0 ? (
               <div className="space-y-4">
-                {dashboardData.active_assignments.slice(0, 3).map((assignment) => (
+                {dashboardData.active_assignments.map((assignment) => (
                   <StudentCard
                     key={assignment.id}
                     student={assignment.student}

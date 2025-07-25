@@ -698,9 +698,9 @@ const SessionList = () => {
                       <CheckCircle size={16} />
                     </button>
                   )}
-                  {session.location && (
+                  {session.meeting_link && (
                     <a
-                      href={session.location}
+                      href={session.meeting_link}
                       target="_blank"
                       rel="noopener noreferrer"
                       onClick={(e) => e.stopPropagation()}

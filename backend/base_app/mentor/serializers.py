@@ -135,7 +135,8 @@ class MentorMessageSerializer(serializers.ModelSerializer):
         read_only_fields = ['uuid', 'sender', 'is_read', 'read_at', 'created_at', 'updated_at']
     
     def create(self, validated_data):
-        validated_data['sender'] = self.context['request'].user
+        if 'sender' not in validated_data:
+            validated_data['sender'] = self.context['request'].user
         return super().create(validated_data)
 
 

@@ -93,6 +93,7 @@ class Milestone(models.Model):
     description = models.TextField(blank=True)
     color = models.CharField(max_length=7, default='#6366f1')
     created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
         return self.name
