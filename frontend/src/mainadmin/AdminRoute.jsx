@@ -11,6 +11,7 @@ import AdminDashboard from './AdminDashboard';
 import CohortManager from './CohortManager';
 import TeamManager from './TeamManager';
 import InvitationManager from './InvitationManager';
+import AdminFlowRoutes from '../admin-flow/AdminFlowRoutes';
 const AdminRoute = () => {
   return (
   <div>
@@ -28,6 +29,9 @@ const AdminRoute = () => {
       <Route path="teams" element={<TeamManager />} />
       <Route path="invitations" element={<InvitationManager />} />
     </Route>
+
+    {/* Admin Flow Routes */}
+    <Route path="/admin-flow/*" element={<AdminFlowRoutes />} />
 
     {/* You can add public routes here */}
     {/* <Route path="/" element={<HomePage />} /> */}

@@ -2,7 +2,7 @@ from django.db import models
 from django.contrib.auth.models import AbstractUser
 from django.core.validators import MinValueValidator, MaxValueValidator
 from django.utils import timezone
-from enum import TextChoices
+from django.db.models import TextChoices
 import uuid
 import json
 

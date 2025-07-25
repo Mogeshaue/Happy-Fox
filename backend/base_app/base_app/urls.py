@@ -36,6 +36,12 @@ urlpatterns = [
     path('api/auth/dev-bypass/', student_views.dev_auth_bypass, name='dev_auth_bypass'),
     path('api/auth/test/', student_views.test_student_login, name='test_student_login'),
     
+    # Student Flow URLs - comprehensive student learning system
+    path('student-flow/', include('student_flow.urls')),
+    
+    # Admin Flow URLs - comprehensive admin management system
+    path('admin-flow/', include('admin_flow.urls')),
+    
     # Mentor URLs
     path('mentor/', include('mentor.urls')),
 ]

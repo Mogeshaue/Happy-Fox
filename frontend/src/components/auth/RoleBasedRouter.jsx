@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useAuth } from '../../contexts/AuthContext';
 import LoginPage from './LoginPage';
-import RoleInterfaceFactory from './factories/RoleInterfaceFactory';
+import RoleInterfaceFactory from './factories/RoleInterfaceFactory.jsx';
 import ErrorHandlingService from './services/ErrorHandlingService';
 
 /**

@@ -1,5 +1,5 @@
 import React from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { Routes, Route, Navigate } from 'react-router-dom';
 import { IRoleInterface } from './IRoleInterface.js';
 import MentorRoutes from '../../../mentor/MentorRoutes.jsx';
 
@@ -20,20 +20,18 @@ export class MentorInterface extends IRoleInterface {
     const { user, getUserDisplayName } = this.authContext;
     
     return (
-      <Router>
-        <div className="mentor-interface" role="main" aria-label="Mentor Portal">
-          {/* Debug information */}
-          <div className="debug-info" style={{ padding: '10px', background: '#f0f0f0', fontSize: '12px' }}>
-            <strong>Debug - Mentor Interface:</strong> User: {getUserDisplayName()}, Role: {this.roleName}
-          </div>
-
-          {/* Mentor Routes - Direct routing to mentor app */}
-          <Routes>
-            <Route path="/mentor/*" element={<MentorRoutes />} />
-            <Route path="*" element={<Navigate to="/mentor/dashboard" replace />} />
-          </Routes>
+      <div className="mentor-interface" role="main" aria-label="Mentor Portal">
+        {/* Debug information */}
+        <div className="debug-info" style={{ padding: '10px', background: '#f0f0f0', fontSize: '12px' }}>
+          <strong>Debug - Mentor Interface:</strong> User: {getUserDisplayName()}, Role: {this.roleName}
         </div>
-      </Router>
+
+        {/* Mentor Routes - Direct routing to mentor app */}
+        <Routes>
+          <Route path="/mentor/*" element={<MentorRoutes />} />
+          <Route path="*" element={<Navigate to="/mentor/dashboard" replace />} />
+        </Routes>
+      </div>
     );
   }
 

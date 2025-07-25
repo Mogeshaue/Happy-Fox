@@ -6,6 +6,7 @@ from django.utils.safestring import mark_safe
 from django.http import HttpResponseRedirect
 from django.contrib.admin import SimpleListFilter
 from django.utils import timezone
+from django.apps import apps
 
 from .models import (
     User, Organization, UserOrganization, Cohort, UserCohort, Milestone,
@@ -14,6 +15,13 @@ from .models import (
     SystemConfiguration, ContentGenerationJob, AdminNotification,
     AdminAnalytics, BulkOperation, AdminDashboardWidget
 )
+
+# Check if UserOrganization is already registered and unregister if needed
+try:
+    if admin.site.is_registered(UserOrganization):
+        admin.site.unregister(UserOrganization)
+except:
+    pass  # Model might not be registered, which is fine
 
 
 # =================== CUSTOM FILTERS ===================
@@ -537,11 +545,11 @@ admin.site.site_title = "Admin Flow Admin"
 admin.site.index_title = "Welcome to Admin Flow Administration"
 
 # Hide some models from admin if they're not needed for direct editing
-admin.site.unregister(UserOrganization)
-admin.site.unregister(UserCohort)
-admin.site.unregister(CourseCohort)
-admin.site.unregister(CourseMilestone)
-admin.site.unregister(CourseTask)
-admin.site.unregister(Question)
-admin.site.unregister(TaskCompletion)
-admin.site.unregister(AdminDashboardWidget) 
+models_to_unregister = [UserCohort, CourseCohort, CourseMilestone, CourseTask, Question, TaskCompletion, AdminDashboardWidget]
+
+for model in models_to_unregister:
+    try:
+        if admin.site.is_registered(model):
+            admin.site.unregister(model)
+    except:
+        pass  # Model might not be registered, which is fine 

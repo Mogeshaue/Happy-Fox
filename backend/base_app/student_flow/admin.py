@@ -66,6 +66,7 @@ class EnrollmentStatusFilter(SimpleListFilter):
 
 class StudentEnrollmentInline(admin.TabularInline):
     model = StudentEnrollment
+    fk_name = 'student'  # Specify the foreign key field name
     extra = 0
     readonly_fields = ['enrolled_at', 'progress_percentage', 'is_overdue']
     fields = ['course', 'cohort', 'status', 'progress_percentage', 'grade', 'enrolled_at', 'is_overdue']
@@ -73,6 +74,7 @@ class StudentEnrollmentInline(admin.TabularInline):
 
 class LearningSessionInline(admin.TabularInline):
     model = LearningSession
+    fk_name = 'student'  # Specify the foreign key field name
     extra = 0
     readonly_fields = ['started_at', 'total_duration_minutes', 'accuracy_rate']
     fields = ['course', 'task', 'session_type', 'status', 'total_duration_minutes', 'accuracy_rate']
@@ -80,6 +82,7 @@ class LearningSessionInline(admin.TabularInline):
 
 class LearningGoalInline(admin.TabularInline):
     model = LearningGoal
+    fk_name = 'student'  # Specify the foreign key field name
     extra = 0
     readonly_fields = ['created_at', 'days_until_target', 'is_overdue']
     fields = ['title', 'category', 'status', 'target_date', 'days_until_target', 'is_overdue']
@@ -87,9 +90,10 @@ class LearningGoalInline(admin.TabularInline):
 
 class StudyGroupMembershipInline(admin.TabularInline):
     model = StudyGroupMembership
+    fk_name = 'study_group'  # Specify the foreign key field name pointing to StudyGroup
     extra = 0
     readonly_fields = ['joined_at', 'approved_at']
-    fields = ['study_group', 'status', 'role', 'joined_at', 'approved_at']
+    fields = ['student', 'status', 'role', 'joined_at', 'approved_at']
 
 
 # =================== MAIN ADMIN CLASSES ===================
@@ -134,7 +138,8 @@ class StudentProfileAdmin(admin.ModelAdmin):
         }),
     )
     
-    inlines = [StudentEnrollmentInline, LearningGoalInline]
+    # Note: Removed inlines as they have foreign keys to User, not StudentProfile
+    # Related objects can be viewed through the User admin or dedicated admin pages
     
     def user_name(self, obj):
         return obj.user.get_full_name() or obj.user.email
@@ -499,13 +504,13 @@ class LearningGoalAdmin(admin.ModelAdmin):
             'fields': ('uuid', 'student', 'title', 'description', 'category')
         }),
         ('Status & Priority', {
-            'fields': ('status', 'priority', 'target_date', 'progress_percentage')
+            'fields': ('status', 'priority', 'progress_percentage')
         }),
         ('Context', {
             'fields': ('course', 'related_tasks')
         }),
         ('Timeline', {
-            'fields': ('started_at', 'completed_at', 'target_date')
+            'fields': ('target_date', 'started_at', 'completed_at')
         }),
         ('Planning', {
             'fields': ('success_criteria', 'milestones')

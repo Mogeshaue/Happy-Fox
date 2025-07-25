@@ -99,4 +99,4 @@ RoleInterfaceFactory.registerRole('admin', AdminInterface);
 RoleInterfaceFactory.registerRole('mentor', MentorInterface);
 RoleInterfaceFactory.registerRole('student', StudentInterface);
 
-export default RoleInterfaceFactory; 
+export default RoleInterfaceFactory;

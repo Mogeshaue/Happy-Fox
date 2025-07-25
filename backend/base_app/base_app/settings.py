@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'corsheaders',
     'students',
     'mentor',  # Added mentor app
+    'student_flow',  # Added student flow app
     'admin_flow',
 ]
 
@@ -127,11 +128,12 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-
+CORS_ALLOW_ALL_ORIGINS = True
 # CORS settings
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:5173",  # Vite's default port
     "http://127.0.0.1:5173",
+    
 ]
 
 # REST Framework settings

@@ -217,10 +217,6 @@ const useCourseStore = create((set) => ({
   // --- Auth User ---
   authUser: null,
   setAuthUser: (user) => set(() => ({ authUser: user })),
-
-  // --- Auth User ---
-  authUser: null,
-  setAuthUser: (user) => set(() => ({ authUser: user })),
 }));
 
 export default useCourseStore;
