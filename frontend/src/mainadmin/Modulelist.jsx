@@ -1,4 +1,8 @@
 import React, { useState } from "react";
+import { Card, Typography, Box, Button, Collapse, IconButton } from '@mui/material';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import ExpandLessIcon from '@mui/icons-material/ExpandLess';
+import EditIcon from '@mui/icons-material/Edit';
 
 const ModuleList = ({ modules }) => {
   const [expandedModuleId, setExpandedModuleId] = useState(null);
@@ -8,37 +12,28 @@ const ModuleList = ({ modules }) => {
   };
 
   return (
-    <ul className="space-y-2 max-h-60 overflow-y-auto pr-2">
+    <Box>
       {modules.map((mod) => (
-        <li
-          key={mod.id}
-          className="bg-white p-2 rounded border border-gray-200"
-        >
-          {/* Header row */}
-          <div className="flex items-center justify-between">
-            <span>{mod.name}</span>
-            <div className="flex gap-2">
-              <button
-                onClick={() => toggleContent(mod.id)}
-                className="border border-blue-600 text-blue-600 px-3 py-0.5 rounded hover:bg-blue-600 hover:text-white transition text-sm"
-              >
-                {expandedModuleId === mod.id ? "Hide" : "View"}
-              </button>
-              <button className="border border-green-600 text-green-600 px-3 py-0.5 rounded hover:bg-green-600 hover:text-white transition text-sm">
-                Edit
-              </button>
-            </div>
-          </div>
-
-          {/* Toggleable content */}
-          {expandedModuleId === mod.id && mod.content && (
-            <div className="mt-2 text-sm text-gray-700 whitespace-pre-line border-t pt-2">
+        <Card key={mod.id} sx={{ mb: 2, p: 2 }}>
+          <Box display="flex" alignItems="center" justifyContent="space-between">
+            <Typography>{mod.name}</Typography>
+            <Box display="flex" gap={1}>
+              <IconButton onClick={() => toggleContent(mod.id)}>
+                {expandedModuleId === mod.id ? <ExpandLessIcon /> : <ExpandMoreIcon />}
+              </IconButton>
+              <IconButton color="success">
+                <EditIcon />
+              </IconButton>
+            </Box>
+          </Box>
+          <Collapse in={expandedModuleId === mod.id && !!mod.content}>
+            <Typography mt={2} color="text.secondary" variant="body2">
               {mod.content}
-            </div>
-          )}
-        </li>
+            </Typography>
+          </Collapse>
+        </Card>
       ))}
-    </ul>
+    </Box>
   );
 };
 

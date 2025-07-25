@@ -1,4 +1,6 @@
 import React, { useEffect, useState } from 'react';
+import { Card, Avatar, Typography, Box } from '@mui/material';
+import Loader from '../components/common/Loader';
 
 const Profile = () => {
   const [user, setUser] = useState(null);
@@ -12,25 +14,22 @@ const Profile = () => {
   }, []);
 
   if (!user) {
-    return <div className="p-8 text-center">Loading profile...</div>;
+    return <Loader />;
   }
 
   return (
-    <div className="p-8 max-w-xl mx-auto">
-      <h1 className="text-3xl font-bold mb-6">Student Profile</h1>
-
-      <div className="bg-white shadow-md rounded-lg p-6 flex items-center space-x-6">
-        <img
-          src={user.picture}
-          alt="Profile"
-          className="w-24 h-24 rounded-full border"
-        />
-        <div>
-          <p className="text-xl font-semibold text-gray-800">{user.name}</p>
-          <p className="text-gray-600">{user.email}</p>
-        </div>
-      </div>
-    </div>
+    <Box sx={{ p: { xs: 2, md: 6 }, maxWidth: 600, mx: 'auto' }}>
+      <Typography variant="h4" fontWeight={700} mb={4} color="text.primary">
+        Student Profile
+      </Typography>
+      <Card sx={{ p: 4, display: 'flex', alignItems: 'center', gap: 4 }}>
+        <Avatar src={user.picture} alt="Profile" sx={{ width: 96, height: 96, border: 2, borderColor: 'primary.main' }} />
+        <Box>
+          <Typography variant="h6">{user.name}</Typography>
+          <Typography color="text.secondary">{user.email}</Typography>
+        </Box>
+      </Card>
+    </Box>
   );
 };
 

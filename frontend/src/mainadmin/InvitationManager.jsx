@@ -1,5 +1,26 @@
 import React, { useEffect, useState } from "react";
 import useCourseStore from "../store/Adminstors";
+import {
+  Box,
+  Typography,
+  Card,
+  Grid,
+  TextField,
+  Select,
+  MenuItem,
+  Button,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Paper,
+  IconButton,
+} from '@mui/material';
+import DeleteIcon from '@mui/icons-material/Delete';
+import Loader from '../components/common/Loader';
+import { useSnackbar } from 'notistack';
 
 const InvitationManager = () => {
   const {
@@ -18,6 +39,7 @@ const InvitationManager = () => {
   const [form, setForm] = useState({ email: "", team: "" });
   const [inviting, setInviting] = useState(false);
   const [deletingId, setDeletingId] = useState(null);
+  const { enqueueSnackbar } = useSnackbar();
 
   useEffect(() => {
     fetchInvitations();
@@ -36,96 +58,110 @@ const InvitationManager = () => {
     await addInvitation(form.email, form.team);
     setInviting(false);
     setForm({ email: "", team: "" });
+    enqueueSnackbar('Invitation sent', { variant: 'success' });
   };
 
   const handleDelete = async (id) => {
     setDeletingId(id);
     await deleteInvitation(id);
     setDeletingId(null);
+    enqueueSnackbar('Invitation revoked', { variant: 'info' });
   };
 
+  if (loadingInvitations || loadingTeams) return <Loader />;
+
   return (
-    <div className="min-h-screen p-6 bg-white text-black">
-      <h2 className="text-3xl font-bold mb-6">Invitation Management</h2>
-
-      {/* Invite Member Form */}
-      <div className="bg-gray-100 p-5 rounded shadow-sm border border-gray-300 mb-8">
-        <h3 className="text-xl font-semibold mb-4">Invite Member to Team</h3>
-        <form className="flex flex-col md:flex-row gap-4" onSubmit={handleInvite}>
-          <input
-            type="email"
-            name="email"
-            placeholder="Member Email"
-            value={form.email}
-            onChange={handleChange}
-            className="border border-gray-300 rounded px-4 py-2 w-full bg-white"
-            required
-          />
-          <select
-            name="team"
-            value={form.team}
-            onChange={handleChange}
-            className="border border-gray-300 rounded px-4 py-2 w-full bg-white"
-            required
-            disabled={loadingTeams}
-          >
-            <option value="">Select Team</option>
-            {teams.map((team) => (
-              <option key={team.id} value={team.id}>
-                {team.name}
-              </option>
-            ))}
-          </select>
-          <button
-            type="submit"
-            className="bg-green-600 text-white px-6 py-2 rounded hover:bg-green-800 transition"
-            disabled={inviting || loadingTeams}
-          >
-            {inviting ? "Inviting..." : "Invite"}
-          </button>
-        </form>
-        {errorInvitations && <p className="text-red-500 mt-2">{errorInvitations}</p>}
-        {errorTeams && <p className="text-red-500 mt-2">{errorTeams}</p>}
-      </div>
-
-      {/* Invitation List */}
-      <div>
-        <h3 className="text-xl font-semibold mb-4">Invitations</h3>
-        {loadingInvitations ? (
-          <p className="text-gray-500">Loading invitations...</p>
-        ) : errorInvitations ? (
-          <p className="text-red-500">Error: {errorInvitations}</p>
-        ) : invitations.length === 0 ? (
-          <p className="text-gray-500">No invitations sent yet.</p>
-        ) : (
-          <ul className="space-y-3">
-            {invitations.map((inv) => (
-              <li
-                key={inv.id}
-                className="bg-gray-100 border border-gray-300 p-4 rounded shadow-sm flex justify-between items-center"
+    <Box sx={{ p: { xs: 2, md: 6 } }}>
+      <Typography variant="h4" fontWeight={700} mb={4} color="text.primary">
+        Invitation Management
+      </Typography>
+      <Card sx={{ p: 4, mb: 4 }}>
+        <Typography variant="h6" mb={2}>Invite Member to Team</Typography>
+        <form onSubmit={handleInvite}>
+          <Grid container spacing={2} alignItems="center">
+            <Grid item xs={12} md={5}>
+              <TextField
+                type="email"
+                name="email"
+                label="Member Email"
+                value={form.email}
+                onChange={handleChange}
+                fullWidth
+                required
+              />
+            </Grid>
+            <Grid item xs={12} md={5}>
+              <Select
+                name="team"
+                value={form.team}
+                onChange={handleChange}
+                fullWidth
+                required
+                displayEmpty
+                disabled={loadingTeams}
               >
-                <div>
-                  <p className="font-medium">{inv.email}</p>
-                  <p className="text-sm text-gray-600">
-                    Team: {teams.find((t) => t.id === inv.team)?.name || inv.team}
-                  </p>
-                  <p className="text-sm text-gray-600">
-                    Status: {inv.accepted ? "Accepted" : "Pending"}
-                  </p>
-                </div>
-                <button
-                  onClick={() => handleDelete(inv.id)}
-                  className="text-red-500 hover:underline text-sm"
-                  disabled={deletingId === inv.id}
-                >
-                  {deletingId === inv.id ? "Revoking..." : "Revoke"}
-                </button>
-              </li>
-            ))}
-          </ul>
+                <MenuItem value=""><em>Select Team</em></MenuItem>
+                {teams.map((team) => (
+                  <MenuItem key={team.id} value={team.id}>{team.name}</MenuItem>
+                ))}
+              </Select>
+            </Grid>
+            <Grid item xs={12} md={2}>
+              <Button
+                type="submit"
+                variant="contained"
+                color="success"
+                fullWidth
+                disabled={inviting || loadingTeams}
+              >
+                {inviting ? "Inviting..." : "Invite"}
+              </Button>
+            </Grid>
+          </Grid>
+        </form>
+        {errorInvitations && <Typography color="error" mt={2}>{errorInvitations}</Typography>}
+        {errorTeams && <Typography color="error" mt={2}>{errorTeams}</Typography>}
+      </Card>
+      <Box>
+        <Typography variant="h6" mb={2}>Invitations</Typography>
+        {errorInvitations ? (
+          <Typography color="error">Error: {errorInvitations}</Typography>
+        ) : invitations.length === 0 ? (
+          <Typography color="text.secondary">No invitations sent yet.</Typography>
+        ) : (
+          <TableContainer component={Paper}>
+            <Table>
+              <TableHead>
+                <TableRow>
+                  <TableCell>Email</TableCell>
+                  <TableCell>Team</TableCell>
+                  <TableCell>Status</TableCell>
+                  <TableCell align="right">Actions</TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {invitations.map((inv) => (
+                  <TableRow key={inv.id}>
+                    <TableCell>{inv.email}</TableCell>
+                    <TableCell>{teams.find((t) => t.id === inv.team)?.name || inv.team}</TableCell>
+                    <TableCell>{inv.accepted ? "Accepted" : "Pending"}</TableCell>
+                    <TableCell align="right">
+                      <IconButton
+                        color="error"
+                        onClick={() => handleDelete(inv.id)}
+                        disabled={deletingId === inv.id}
+                      >
+                        <DeleteIcon />
+                      </IconButton>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </TableContainer>
         )}
-      </div>
-    </div>
+      </Box>
+    </Box>
   );
 };
 

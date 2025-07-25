@@ -1,91 +1,52 @@
-import React from "react";
-import { NavLink } from "react-router-dom";
-import {
-  LayoutDashboard,
-  BookOpen,
-  ListTodo,
-  Users,
-  GraduationCap,
-} from "lucide-react";
+import React from 'react';
+import { NavLink } from 'react-router-dom';
+import { List, ListItem, ListItemIcon, ListItemText, Box, Typography, Divider } from '@mui/material';
+import DashboardIcon from '@mui/icons-material/Dashboard';
+import MenuBookIcon from '@mui/icons-material/MenuBook';
+import ListAltIcon from '@mui/icons-material/ListAlt';
+import GroupAddIcon from '@mui/icons-material/GroupAdd';
+import SchoolIcon from '@mui/icons-material/School';
 
-const MentorSidebar = () => {
+const navItems = [
+  { to: 'dashboard', text: 'Dashboard', icon: <DashboardIcon /> },
+  { to: 'addcourse', text: 'Assigned-Courses', icon: <MenuBookIcon /> },
+  { to: 'create-course', text: 'Created Courses', icon: <ListAltIcon /> },
+  { to: 'Add-students', text: 'Add Students', icon: <GroupAddIcon /> },
+  { to: 'Add-mentors', text: 'Add Mentors', icon: <SchoolIcon /> },
+];
+
+const Msidebar = () => {
   return (
-    <div className="h-screen w-64 bg-white border-r shadow-sm fixed top-0 left-0 p-6">
-      <h2 className="text-2xl font-bold text-gray-800 mb-10">Admin Panel</h2>
-
-      <nav className="flex flex-col space-y-4">
-        <NavLink
-          to="dashboard"
-          className={({ isActive }) =>
-            `flex items-center gap-3 px-4 py-2 rounded-md transition-all ${
-              isActive
-                ? "bg-blue-600 text-white font-semibold"
-                : "text-gray-700 hover:text-black hover:bg-gray-100"
-            }`
-          }
-        >
-          <LayoutDashboard size={20} />
-          <span>Dashboard</span>
-        </NavLink>
-
-        <NavLink
-          to="addcourse"
-          className={({ isActive }) =>
-            `flex items-center gap-3 px-4 py-2 rounded-md transition-all ${
-              isActive
-                ? "bg-blue-600 text-white font-semibold"
-                : "text-gray-700 hover:text-black hover:bg-gray-100"
-            }`
-          }
-        >
-          <BookOpen size={20} />
-          <span>Assigned-Courses</span>
-        </NavLink>
-
-        <NavLink
-          to="create-course"
-          className={({ isActive }) =>
-            `flex items-center gap-3 px-4 py-2 rounded-md transition-all ${
-              isActive
-                ? "bg-blue-600 text-white font-semibold"
-                : "text-gray-700 hover:text-black hover:bg-gray-100"
-            }`
-          }
-        >
-          <ListTodo size={20} />
-          <span>Created Courses</span>
-        </NavLink>
-
-        <NavLink
-          to="Add-students"
-          className={({ isActive }) =>
-            `flex items-center gap-3 px-4 py-2 rounded-md transition-all ${
-              isActive
-                ? "bg-blue-600 text-white font-semibold"
-                : "text-gray-700 hover:text-black hover:bg-gray-100"
-            }`
-          }
-        >
-          <Users size={20} />
-          <span>Add Students</span>
-        </NavLink>
-
-        <NavLink
-          to="Add-mentors"
-          className={({ isActive }) =>
-            `flex items-center gap-3 px-4 py-2 rounded-md transition-all ${
-              isActive
-                ? "bg-blue-600 text-white font-semibold"
-                : "text-gray-700 hover:text-black hover:bg-gray-100"
-            }`
-          }
-        >
-          <GraduationCap size={20} />
-          <span>Add Mentors</span>
-        </NavLink>
-      </nav>
-    </div>
+    <Box sx={{ width: 220, height: '100vh', bgcolor: 'background.paper', borderRight: 1, borderColor: 'divider', p: 2 }}>
+      <Typography variant="h5" fontWeight={700} color="text.primary" mb={4}>
+        Mentor Panel
+      </Typography>
+      <Divider />
+      <List>
+        {navItems.map((item) => (
+          <ListItem
+            button
+            key={item.text}
+            component={NavLink}
+            to={item.to}
+            sx={{
+              borderRadius: 2,
+              mb: 1,
+              '&.active': {
+                bgcolor: 'primary.main',
+                color: 'white',
+                fontWeight: 600,
+                '& .MuiListItemIcon-root': { color: 'white' },
+              },
+            }}
+          >
+            <ListItemIcon>{item.icon}</ListItemIcon>
+            <ListItemText primary={item.text} />
+          </ListItem>
+        ))}
+      </List>
+    </Box>
   );
 };
 
-export default MentorSidebar;
+export default Msidebar;
