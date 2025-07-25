@@ -72,7 +72,7 @@ const SessionDetails = () => {
   // ===================================
   // STATE MANAGEMENT
   // ===================================
-  const { id } = useParams();
+  const { sessionId } = useParams();
   const navigate = useNavigate();
   
   // Local component state
@@ -94,40 +94,34 @@ const SessionDetails = () => {
   const fetchSessionDetails = async () => {
     try {
       setError(null);
-      
-      // MOCK DATA USAGE
-      // TODO: Replace this with actual API call
-      // Example API call (commented out):
-      /*
-      const response = await fetch(`http://127.0.0.1:8000/mentor/api/sessions/${id}/`, {
+      setLoading(true);
+      // Replace with your real backend endpoint for mentor session details
+      // Example: /mentor/api/sessions/:id/ or similar
+      const response = await fetch(`http://127.0.0.1:8000/mentor/api/sessions/${sessionId}/`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
-          // 'Authorization': `Bearer ${localStorage.getItem('auth_token')}`, // Add if authentication is needed
+          // 'Authorization': `Bearer ${localStorage.getItem('auth_token')}`,
         },
       });
-
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
-
       const data = await response.json();
-      
-      if (data.success) {
+      // Adjust this according to your backend response structure
+      if (data.data) {
         setSession(data.data);
         setNotes(data.data.notes || '');
+      } else if (data.results) {
+        setSession(data.results);
+        setNotes(data.results.notes || '');
+      } else if (Array.isArray(data)) {
+        setSession(data);
+        setNotes('');
       } else {
-        throw new Error(data.message || 'Failed to fetch session details');
+        setSession(null);
+        setNotes('');
       }
-      */
-
-      // Simulate API delay for realistic UX
-      await new Promise(resolve => setTimeout(resolve, 600));
-      
-      // Use mock data for now
-      setSession(MOCK_SESSION_DETAILS);
-      setNotes(MOCK_SESSION_DETAILS.notes || '');
-      
     } catch (err) {
       console.error('Session fetch error:', err);
       setError(err.message || 'Failed to load session details');
@@ -146,7 +140,7 @@ const SessionDetails = () => {
       // TODO: Replace this with actual API call
       // Example API call (commented out):
       /*
-      const response = await fetch(`http://127.0.0.1:8000/mentor/api/sessions/${id}/`, {
+      const response = await fetch(`http://127.0.0.1:8000/mentor/api/sessions/${sessionId}/`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
@@ -174,7 +168,7 @@ const SessionDetails = () => {
       // Update mock data
       setSession(prev => ({ ...prev, status: newStatus, updated_at: new Date().toISOString() }));
       
-      console.log(`Session ${id} status updated to ${newStatus}`);
+      console.log(`Session ${sessionId} status updated to ${newStatus}`);
       
     } catch (err) {
       console.error('Session update error:', err);
@@ -192,7 +186,7 @@ const SessionDetails = () => {
       // TODO: Replace this with actual API call
       // Example API call (commented out):
       /*
-      const response = await fetch(`http://127.0.0.1:8000/mentor/api/sessions/${id}/`, {
+      const response = await fetch(`http://127.0.0.1:8000/mentor/api/sessions/${sessionId}/`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
@@ -251,7 +245,7 @@ const SessionDetails = () => {
   // ===================================
   useEffect(() => {
     fetchSessionDetails();
-  }, [id]);
+  }, [sessionId]);
 
   // ===================================
   // ERROR HANDLING & LOADING STATES
@@ -371,9 +365,9 @@ const SessionDetails = () => {
               <span>Complete Session</span>
             </button>
           )}
-          {session.location && (
+          {session.meeting_link && (
             <a
-              href={session.location}
+              href={session.meeting_link}
               target="_blank"
               rel="noopener noreferrer"
               className="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition-colors flex items-center space-x-2"
@@ -423,18 +417,18 @@ const SessionDetails = () => {
                 </div>
               </div>
 
-              {session.location && (
+              {session.meeting_link && (
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">Meeting Location</label>
                   <div className="flex items-center space-x-2">
                     <MapPin size={16} className="text-gray-500" />
                     <a
-                      href={session.location}
+                      href={session.meeting_link}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="text-blue-600 hover:text-blue-700 underline"
                     >
-                      {session.location}
+                      {session.meeting_link}
                     </a>
                   </div>
                 </div>

@@ -124,20 +124,17 @@ const MessageThread = () => {
     try {
       setSending(true);
       
-      // MOCK DATA USAGE
-      // TODO: Replace this with actual API call
-      // Example API call (commented out):
-      /*
+      // Send real API call
       const response = await fetch('http://127.0.0.1:8000/mentor/api/messages/', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          // 'Authorization': `Bearer ${localStorage.getItem('auth_token')}`, // Add if authentication is needed
+          // 'Authorization': `Bearer ${localStorage.getItem('auth_token')}`,
         },
         body: JSON.stringify({
-          thread_id: id,
+          assignment_id: threadData.assignment?.id,
           content: newMessage.trim(),
-          sender_type: 'mentor'
+          message_type: 'text',
         }),
       });
 
@@ -146,7 +143,6 @@ const MessageThread = () => {
       }
 
       const data = await response.json();
-      
       if (data.success) {
         // Add the new message to the thread
         setThreadData(prev => ({
@@ -157,25 +153,6 @@ const MessageThread = () => {
       } else {
         throw new Error(data.message || 'Failed to send message');
       }
-      */
-
-      // Simulate API delay
-      await new Promise(resolve => setTimeout(resolve, 300));
-      
-      // Add mock message
-      const mockMessage = {
-        id: Date.now(),
-        content: newMessage.trim(),
-        sender_type: 'mentor',
-        created_at: new Date().toISOString(),
-        is_read: true
-      };
-      
-      setThreadData(prev => ({
-        ...prev,
-        messages: [...prev.messages, mockMessage]
-      }));
-      setNewMessage('');
       
     } catch (err) {
       console.error('Send message error:', err);

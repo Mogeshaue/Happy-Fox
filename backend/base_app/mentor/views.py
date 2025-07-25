@@ -24,6 +24,7 @@ from .serializers import (
     MentorStatsSerializer, UserBasicSerializer
 )
 from .permissions import IsMentor, IsMentorOrStudent, IsOrgAdmin
+from students.models import Student
 
 
 # ===============================
@@ -195,8 +196,7 @@ def mentor_dashboard(request):
         
         # Get active assignments
         active_assignments = MentorshipAssignment.objects.filter(
-            mentor=user,
-            status='active'
+            mentor=user
         ).select_related('student', 'cohort', 'course')[:10]
         
         # Get upcoming sessions
@@ -429,11 +429,13 @@ def mentor_message_list(request):
             }, status=status.HTTP_200_OK)
         
         elif request.method == 'POST':
-            serializer = MentorMessageSerializer(data=request.data)
+            serializer = MentorMessageSerializer(data=request.data, context={'request': request})
             if serializer.is_valid():
-                message = serializer.save(
-                    sender=request.user if request.user.is_authenticated else User.objects.first()
-                )
+                if request.user.is_authenticated and hasattr(request.user, 'student'):
+                    sender_instance = request.user.student
+                else:
+                    sender_instance = Student.objects.first()  # fallback for testing
+                message = serializer.save(sender=sender_instance)
                 return Response({
                     'success': True,
                     'data': MentorMessageSerializer(message).data,

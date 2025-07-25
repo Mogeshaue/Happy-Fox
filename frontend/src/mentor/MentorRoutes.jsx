@@ -13,6 +13,8 @@ const SessionDetails = React.lazy(() => import('./pages/Sessions/SessionDetails.
 const MessageList = React.lazy(() => import('./pages/Messages/MessageList.jsx'));
 const MessageThread = React.lazy(() => import('./pages/Messages/MessageThread.jsx'));
 const MentorAnalytics = React.lazy(() => import('./pages/Analytics/MentorAnalytics.jsx'));
+const SessionCreate = React.lazy(() => import('./pages/Sessions/SessionCreate.jsx'));
+const NewMessage = React.lazy(() => import('./pages/Messages/NewMessage.jsx'));
 
 // Loading component for suspense
 const LoadingSpinner = () => (
@@ -91,6 +93,14 @@ const MentorRoutes = () => {
           } 
         />
         <Route 
+          path="sessions/new" 
+          element={
+            <React.Suspense fallback={<LoadingSpinner />}>
+              <SessionCreate />
+            </React.Suspense>
+          } 
+        />
+        <Route 
           path="sessions/:sessionId" 
           element={
             <React.Suspense fallback={<LoadingSpinner />}>
@@ -105,6 +115,14 @@ const MentorRoutes = () => {
           element={
             <React.Suspense fallback={<LoadingSpinner />}>
               <MessageList />
+            </React.Suspense>
+          } 
+        />
+        <Route 
+          path="messages/new" 
+          element={
+            <React.Suspense fallback={<LoadingSpinner />}>
+              <NewMessage />
             </React.Suspense>
           } 
         />
